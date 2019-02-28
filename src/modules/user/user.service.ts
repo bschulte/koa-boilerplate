@@ -1,4 +1,4 @@
-import { User } from "./user.model";
+import User from "./user.model";
 import { UserInput } from "./dtos/UserInput";
 
 class UserService {
@@ -11,7 +11,7 @@ class UserService {
   }
 
   public async create(newUserData: UserInput) {
-    await User.create(newUserData);
+    return await User.create(newUserData);
   }
 }
 

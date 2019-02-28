@@ -1,11 +1,10 @@
 import { AuthChecker } from "type-graphql";
-import { Request } from "apollo-server-express";
 import { userService } from "../modules/user/user.service";
 
 export const ADMIN = "ADMIN";
 
-export const authChecker: AuthChecker<Request> = async (
-  { context, args }: { context: any; args: any },
+export const authChecker: AuthChecker = async (
+  { context }: { context: any },
   roles: string[]
 ) => {
   if (!context.user) {

@@ -8,11 +8,9 @@ import {
   Model
 } from "sequelize-typescript";
 
-import { hashString } from "../../security/authentication";
-
 @Table
 @ObjectType({ description: "User model" })
-export class User extends Model<User> {
+export default class User extends Model<User> {
   @Field()
   public id: number;
 

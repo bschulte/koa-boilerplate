@@ -1,18 +1,16 @@
 import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 import jwt from "jsonwebtoken";
-import { Context } from "apollo-server-core";
 
-import { User } from "./user.model";
+import User from "./user.model";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
-import { comparePasswords } from "../../security/authentication";
+import { comparePasswords, hashString } from "../../security/authentication";
 import { ADMIN } from "../../security/authChecker";
 
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
-  @Authorized()
-  public async user(@Ctx() ctx: Context) {
+  public async user(@Ctx() ctx: any) {
     return userService.findOneById(ctx.user.id);
   }
 
@@ -25,6 +23,8 @@ export class UserResolver {
       console.log("User already exists with email:", newUserData.email);
       throw new Error("User exists already");
     }
+
+    newUserData.password = hashString(newUserData.password);
 
     return await userService.create(newUserData);
   }
