@@ -1,0 +1,15 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "no-console": false,
+    "trailing-comma": false,
+    "no-shadowed-variable": false,
+    "typedef": [true, "property-declaration", "arrow-parameter", "parameter"],
+    "no-inferrable-types": true,
+    "max-line-length": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": false,
+    "variable-name": false,
+    "max-classes-per-file": false
+  }
+}
