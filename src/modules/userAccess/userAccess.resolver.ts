@@ -1,6 +1,6 @@
 import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 
-import UserAccess from "./userAccess.model";
+import UserAccess from "./userAccess.entity";
 import { userAccessService } from "./userAccess.service";
 import { ADMIN } from "../../security/authChecker";
 

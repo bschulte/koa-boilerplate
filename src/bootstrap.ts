@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import { Sequelize } from "sequelize-typescript";
-import { sqlLog } from "./logging/logger";
+import { createConnection } from "typeorm";
+import { SqlLogger } from "./logging/SqlLogger";
 dotenv.config();
 
 const {
@@ -15,18 +15,14 @@ const {
 // before starting the server/running CLI commands
 export const bootstrap = async () => {
   // Setup DB connection
-  const sequelize = new Sequelize({
-    dialect: "mysql",
+  await createConnection({
+    type: "mysql",
     host: DB_HOST,
     database: DB_NAME,
     username: DB_USER,
     password: DB_PASS,
-    modelPaths: [__dirname + "/**/*.model.ts"],
-    operatorsAliases: false,
-    logging: sqlLog
-  });
-
-  await sequelize.sync({
-    alter: NODE_ENV === "development"
+    entities: [__dirname + "/**/*.entity.ts"],
+    logger: new SqlLogger(),
+    synchronize: NODE_ENV === "development"
   });
 };

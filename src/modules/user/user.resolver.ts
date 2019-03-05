@@ -1,7 +1,7 @@
 import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 import jwt from "jsonwebtoken";
 
-import User from "./user.model";
+import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";

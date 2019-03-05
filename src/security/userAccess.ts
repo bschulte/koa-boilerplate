@@ -1,4 +1,4 @@
-import User from "../modules/user/user.model";
+import User from "../modules/user/user.entity";
 
 // This will verify if the authenticated user has access to
 // the given resource. This can be that the user directly
@@ -18,7 +18,7 @@ export const authorizeResource = (resource: any, user: User) => {
     );
   }
 
-  if (user.isAdmin) {
+  if (user.access.isAdmin) {
     return true;
   }
 

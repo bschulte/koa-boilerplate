@@ -15,32 +15,30 @@ const safeWrite = (file: string, data: string) => {
   writeFileSync(file, data);
 };
 
-const model = `import { ObjectType, Field } from "type-graphql";
+const entity = `
+import { ObjectType, Field } from "type-graphql";
+import User from "../user/user.entity";
 import {
-  Table,
-  Default,
+  Entity,
   Column,
-  CreatedAt,
-  UpdatedAt,
-  Model,
-  BeforeCreate
-} from "sequelize-typescript";
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  PrimaryGeneratedColumn
+} from "typeorm";
 
-@Table
+@Entity()
 @ObjectType({ description: "${name} model" })
-export default class ${name} extends Model<${name}> {
-  public id: number;
+export default class ${name} {
+  @PrimaryGeneratedColumn()
+  public readonly id: number;
 
   @Field()
-  @Column
-  public col: string;
-
-  @Field()
-  @CreatedAt
+  @CreateDateColumn()
   public createdAt: Date;
 
   @Field()
-  @UpdatedAt
+  @UpdateDateColumn()
   public updatedAt: Date;
 }`;
 
@@ -78,7 +76,7 @@ if (!existsSync(`${MODULES_PATH}/${lowercaseName}`)) {
 }
 
 // Model
-safeWrite(`${MODULES_PATH}/${lowercaseName}/${lowercaseName}.model.ts`, model);
+safeWrite(`${MODULES_PATH}/${lowercaseName}/${lowercaseName}.model.ts`, entity);
 // Service
 safeWrite(
   `${MODULES_PATH}/${lowercaseName}/${lowercaseName}.service.ts`,

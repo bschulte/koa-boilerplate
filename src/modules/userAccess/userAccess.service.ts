@@ -1,8 +1,9 @@
-import UserAccess from "./userAccess.model";
+import UserAccess from "./userAccess.entity";
+import { getRepository } from "typeorm";
 
 class UserAccessService {
   public async findOneById(userAccessId: number): Promise<UserAccess> {
-    return await UserAccess.findOne({ where: { id: userAccessId } });
+    return await getRepository(UserAccess).findOne(userAccessId);
   }
 }
 

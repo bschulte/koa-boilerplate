@@ -7,7 +7,7 @@ import { ApolloServer } from "apollo-server-koa";
 
 import { buildSchemaSync } from "type-graphql";
 
-import User from "./modules/user/user.model";
+import User from "./modules/user/user.entity";
 import { authChecker } from "./security/authChecker";
 import { log, DEBUG, ERROR } from "./logging/logger";
 import { bootstrap } from "./bootstrap";

@@ -29,7 +29,7 @@ export const authChecker: AuthChecker = async (
   // Go through each of the approved roles for the resource and
   // see if the user matches one of them
   for (const role of roles) {
-    if (role === ADMIN && user.isAdmin) {
+    if (role === ADMIN && user.access.isAdmin) {
       return true;
     }
   }

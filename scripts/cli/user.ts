@@ -15,10 +15,6 @@ export const cliChangePass = async (argv: any) => {
   const email = getOptionValue(argv, "e", "email");
   const password = getOptionValue(argv, "p", "password");
 
-  const wasSuccessful = await userService.changePassword(email, password);
-  if (wasSuccessful) {
-    console.log(chalk.green("Successfully changed password"));
-  } else {
-    console.log(chalk.red("Error changing password"));
-  }
+  await userService.changePassword(email, password);
+  console.log(chalk.green("Successfully changed password"));
 };

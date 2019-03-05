@@ -1,6 +1,8 @@
-import User from "./user.model";
+import User from "./user.entity";
 import { randomStr } from "../../helpers/util";
 import { hashString } from "../../security/authentication";
+import UserAccess from "../userAccess/userAccess.entity";
+import { getRepository } from "typeorm";
 
 class UserService {
   /**
@@ -10,33 +12,30 @@ class UserService {
    */
   public async create(email: string) {
     const randomPassword = randomStr(12);
-    await User.create({
-      email,
-      password: randomPassword
-    });
+
+    const user = new User();
+    user.email = email;
+    user.password = randomPassword;
+
+    const access = new UserAccess();
+    user.access = access;
+
+    await getRepository(User).save(user);
 
     return randomPassword;
   }
 
-  public async changePassword(
-    email: string,
-    newPass: string
-  ): Promise<boolean> {
+  public async changePassword(email: string, newPass: string): Promise<void> {
     const hashedPass = hashString(newPass);
-    const [numUsersUpdated] = await User.update(
-      { password: hashedPass },
-      { where: { email } }
-    );
-
-    return numUsersUpdated === 1;
+    await getRepository(User).update({ email }, { password: hashedPass });
   }
 
   public async findOneById(userId: number): Promise<User> {
-    return await User.findOne({ where: { id: userId } });
+    return await getRepository(User).findOne(userId);
   }
 
   public async findOneByEmail(email: string): Promise<User> {
-    return await User.findOne({ where: { email } });
+    return await getRepository(User).findOne({ email });
   }
 }
 
