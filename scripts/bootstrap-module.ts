@@ -1,8 +1,13 @@
 #!/usr/bin/env ts-node
 import { existsSync, writeFileSync, exists, mkdirSync } from "fs";
 
+if (process.argv.length !== 4) {
+  console.log("Please provide both the class name and file name to use");
+  process.exit(-1);
+}
 const name = process.argv[2];
-const lowercaseName = name.charAt(0).toLowerCase() + name.slice(1);
+const fileName = process.argv[3];
+const varName = name.charAt(0).toLowerCase() + name.slice(1);
 
 console.log("Bootstrapping module:", name);
 
@@ -27,7 +32,7 @@ import {
 } from "typeorm";
 
 @Entity()
-@ObjectType({ description: "${name} model" })
+@ObjectType({ description: "${name} entity" })
 export default class ${name} {
   @PrimaryGeneratedColumn()
   public readonly id: number;
@@ -41,48 +46,47 @@ export default class ${name} {
   public updatedAt: Date;
 }`;
 
-const service = `import ${name} from "./${lowercaseName}.model";
+const service = `import ${name} from "./${fileName}.entity";
+import { getRepository, Repository } from "typeorm";
 
 class ${name}Service {
-  public async findOneById(${lowercaseName}Id: number): Promise<${name}> {
-    return await ${name}.findOne({ where: { id: ${lowercaseName}Id } });
+  public async findOneById(${varName}Id: number): Promise<${name}> {
+    return await this.repo().findOne(${varName}Id);
+  }
+
+  private repo(): Repository<${name}> {
+    return getRepository(${name});
   }
 }
 
-export const ${lowercaseName}Service = new ${name}Service();
+export const ${varName}Service = new ${name}Service();
 `;
 
 const resolver = `import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 
-import ${name} from "./${lowercaseName}.model";
-import { ${lowercaseName}Service } from "./${lowercaseName}.service";
-import { ADMIN } from "../../security/authChecker";
+import ${name} from "./${fileName}.entity";
+import { ${varName}Service } from "./${fileName}.service";
+import { ADMIN } from "../../security/auth-checker";
 
 @Resolver(${name})
 export class ${name}Resolver {
   @Query(() => ${name})
   @Authorized()
-  public async ${lowercaseName}(@Ctx() ctx: any) {
+  public async ${varName}(@Ctx() ctx: any) {
     console.log("ctx:", ctx);
-    return ${lowercaseName}Service.findOneById(ctx.user.id);
+    return ${varName}Service.findOneById(ctx.user.id);
   }
 }`;
 
 const MODULES_PATH = __dirname + "/../src/modules";
 
-if (!existsSync(`${MODULES_PATH}/${lowercaseName}`)) {
-  mkdirSync(`${MODULES_PATH}/${lowercaseName}`);
+if (!existsSync(`${MODULES_PATH}/${fileName}`)) {
+  mkdirSync(`${MODULES_PATH}/${fileName}`);
 }
 
-// Model
-safeWrite(`${MODULES_PATH}/${lowercaseName}/${lowercaseName}.model.ts`, entity);
+// Entity
+safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.entity.ts`, entity);
 // Service
-safeWrite(
-  `${MODULES_PATH}/${lowercaseName}/${lowercaseName}.service.ts`,
-  service
-);
+safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.service.ts`, service);
 // Resolver
-safeWrite(
-  `${MODULES_PATH}/${lowercaseName}/${lowercaseName}.resolver.ts`,
-  resolver
-);
+safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.resolver.ts`, resolver);
