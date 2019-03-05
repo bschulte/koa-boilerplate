@@ -1,13 +1,13 @@
 import { ObjectType, Field } from "type-graphql";
-import User from "../user/user.entity";
 import {
   Entity,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
+  OneToOne
 } from "typeorm";
+import User from "../user/user.entity";
 
 @Entity()
 @ObjectType({ description: "UserAccess model" })
@@ -29,6 +29,4 @@ export default class UserAccess {
 
   @OneToOne(() => User)
   public user: User;
-  @Column()
-  public userId: number;
 }

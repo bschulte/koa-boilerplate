@@ -1,7 +1,9 @@
 import chalk from "chalk";
+import prompts from "prompts";
 
 import { getOptionValue } from "../cli";
 import { userService } from "../../src/modules/user/user.service";
+import User from "../../src/modules/user/user.entity";
 
 export const cliCreateUser = async (argv: any) => {
   const email = getOptionValue(argv, "e", "email");
@@ -17,4 +19,42 @@ export const cliChangePass = async (argv: any) => {
 
   await userService.changePassword(email, password);
   console.log(chalk.green("Successfully changed password"));
+};
+
+export const cliDeleteUser = async (argv: any) => {
+  let email = getOptionValue(argv, "e", "email");
+
+  // If we weren't provided an email, issue a prompt to the user to select which
+  // user they want to delete
+  if (!email) {
+    const users = await userService.findAll();
+    const response = await prompts({
+      type: "select",
+      name: "email",
+      message: "Select a user to delete",
+      choices: users.map((user: User) => ({
+        title: user.email,
+        value: user.email
+      }))
+    });
+    email = response.email;
+  }
+
+  const user = await userService.findOneByEmail(email);
+
+  const response = await prompts({
+    type: "toggle",
+    name: "confirmed",
+    message: `Are you sure you want to delete user ${email}?`,
+    initial: false,
+    active: "Yes",
+    inactive: "No"
+  });
+
+  if (!response.confirmed) {
+    console.log("Operation aborted");
+    process.exit(0);
+  }
+
+  await userService.delete(user.id);
 };

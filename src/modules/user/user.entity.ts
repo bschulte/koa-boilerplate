@@ -12,7 +12,7 @@ import {
 } from "typeorm";
 
 import { hashString } from "../../security/authentication";
-import UserAccess from "../userAccess/userAccess.entity";
+import UserAccess from "../userAccess/user-access.entity";
 
 @Entity()
 @ObjectType({ description: "User model" })
@@ -35,9 +35,11 @@ export default class User {
   @UpdateDateColumn()
   public updatedAt: Date;
 
-  @OneToOne(() => UserAccess)
+  @OneToOne(() => UserAccess, { cascade: true })
   @JoinColumn()
   public access: UserAccess;
+  @Column()
+  public accessId: number;
 
   @BeforeInsert()
   @BeforeUpdate()

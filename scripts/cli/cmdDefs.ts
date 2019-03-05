@@ -1,4 +1,4 @@
-import { cliCreateUser, cliChangePass } from "./user";
+import { cliCreateUser, cliChangePass, cliDeleteUser } from "./user";
 
 export const FINAL_CMD = "finalCmd";
 
@@ -45,9 +45,28 @@ const userCmds = {
       }
     ],
     handler: cliChangePass
+  },
+  delete: {
+    type: FINAL_CMD,
+    options: [
+      {
+        name: "e",
+        alias: "email",
+        description: "Email of user to delete",
+        type: "string"
+      }
+    ],
+    handler: cliDeleteUser
   }
 };
 
+/**
+ * This is the main definition of commands that can be run. It is a nested object
+ * where the final sub-commands are marked with a property indicating that that
+ * one is the actual command to be run. From there, options and a handler function
+ * are provided to dictate what data is expected and what function to run for
+ * the command.
+ */
 export const cmds = {
   user: { ...userCmds }
 };
