@@ -3,7 +3,7 @@ import path from "path";
 import Koa, { Context } from "koa";
 import jwt from "koa-jwt";
 import serve from "koa-static";
-import { ApolloServer, Request } from "apollo-server-koa";
+import { ApolloServer } from "apollo-server-koa";
 
 import { buildSchemaSync } from "type-graphql";
 

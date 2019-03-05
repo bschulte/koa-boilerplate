@@ -6,9 +6,12 @@ import {
   CreatedAt,
   UpdatedAt,
   Model,
-  BeforeCreate
+  BeforeCreate,
+  PrimaryKey,
+  HasOne
 } from "sequelize-typescript";
 import { hashString } from "../../security/authentication";
+import UserAccess from "../userAccess/userAccess.model";
 
 @Table
 @ObjectType({ description: "User model" })
@@ -18,6 +21,7 @@ export default class User extends Model<User> {
     instance.password = hashString(instance.password);
   }
 
+  @PrimaryKey
   @Column
   public id: number;
 
@@ -28,10 +32,6 @@ export default class User extends Model<User> {
   @Column
   public password: string;
 
-  @Default(false)
-  @Column
-  public isAdmin: boolean;
-
   @Field()
   @CreatedAt
   public createdAt: Date;
@@ -39,4 +39,7 @@ export default class User extends Model<User> {
   @Field()
   @UpdatedAt
   public updatedAt: Date;
+
+  @HasOne(() => UserAccess, "userId")
+  public access: UserAccess;
 }

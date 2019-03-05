@@ -29,7 +29,6 @@ import {
 @Table
 @ObjectType({ description: "${name} model" })
 export default class ${name} extends Model<${name}> {
-  @Field()
   public id: number;
 
   @Field()
