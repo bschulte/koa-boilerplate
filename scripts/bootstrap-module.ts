@@ -17,7 +17,6 @@ const safeWrite = (file: string, data: string) => {
 
 const entity = `
 import { ObjectType, Field } from "type-graphql";
-import User from "../user/user.entity";
 import {
   Entity,
   Column,

@@ -5,7 +5,7 @@ import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
-import { ADMIN } from "../../security/authChecker";
+import { ADMIN } from "../../security/auth-checker";
 
 @Resolver(User)
 export class UserResolver {
