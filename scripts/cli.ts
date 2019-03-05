@@ -15,6 +15,14 @@ const printCommandList = (currentTree: any) => {
   });
 };
 
+const printRequiredOption = (options: IOption[]) => {
+  options
+    .filter((opt: IOption) => opt.required)
+    .forEach((opt: IOption) => {
+      printOption(opt);
+    });
+};
+
 const printOption = (option: IOption) => {
   console.log(`-  ${option.name}${option.alias ? ` , ${option.alias}` : ""}`);
   if (option.description) {
@@ -40,8 +48,12 @@ const verifyOptions = (argv: any, options: IOption[]) => {
       // Check that either the name or its alias is present in the argv object
       const optionValue = getOptionValue(argv, option.name, option.alias);
       if (!optionValue) {
-        console.log(chalk.red("Error:"), "Missing required argument:");
-        printOption(option);
+        console.log(
+          chalk.red("Error:"),
+          `Missing required argument: ${option.name}`
+        );
+        console.log("Required options:");
+        printRequiredOption(options);
         process.exit(-3);
       }
 
