@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { Sequelize } from "sequelize-typescript";
+import { sqlLog } from "./logging/logger";
 dotenv.config();
 
 const {
@@ -21,7 +22,8 @@ export const bootstrap = async () => {
     username: DB_USER,
     password: DB_PASS,
     modelPaths: [__dirname + "/**/*.model.ts"],
-    operatorsAliases: false
+    operatorsAliases: false,
+    logging: sqlLog
   });
 
   await sequelize.sync({
