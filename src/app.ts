@@ -14,15 +14,12 @@ dotenv.config();
 import User from "./modules/user/user.model";
 import { authChecker } from "./security/authChecker";
 import { log, DEBUG, ERROR } from "./logging/logger";
+import { bootstrap } from "./bootstrap";
 
 const {
   NODE_ENV = "development",
   PORT = 5000,
-  APP_KEY = "super secret",
-  DB_HOST,
-  DB_NAME,
-  DB_USER,
-  DB_PASS
+  APP_KEY = "super secret"
 } = process.env;
 
 const GRAPHQL_PATH = "/graphql";
@@ -55,18 +52,7 @@ server.applyMiddleware({ app, path: GRAPHQL_PATH });
 (async () => {
   try {
     // Setup DB connection
-    const sequelize = new Sequelize({
-      dialect: "mysql",
-      host: DB_HOST,
-      database: DB_NAME,
-      username: DB_USER,
-      password: DB_PASS,
-      modelPaths: [__dirname + "/**/*.model.ts"]
-    });
-
-    await sequelize.sync({
-      alter: NODE_ENV === "development"
-    });
+    await bootstrap();
 
     app.listen({ port: PORT }, () => {
       log(

@@ -1,5 +1,6 @@
 import User from "./user.model";
 import { UserInput } from "./dtos/UserInput";
+import { randomStr } from "../../helpers/util";
 
 class UserService {
   public async findOneById(userId: number): Promise<User> {
@@ -10,8 +11,19 @@ class UserService {
     return await User.findOne({ where: { email } });
   }
 
-  public async create(newUserData: UserInput) {
-    return await User.create(newUserData);
+  /**
+   * Create a new user. Will return the generated password for the user
+   *
+   * @param email Email to use while creating new user
+   */
+  public async create(email: string) {
+    const randomPassword = randomStr(12);
+    await User.create({
+      email,
+      password: randomPassword
+    });
+
+    return randomPassword;
   }
 }
 

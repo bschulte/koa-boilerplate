@@ -6,6 +6,7 @@
   "main": "src/app.ts",
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/chalk": "^2.2.0",
     "@types/dotenv": "^6.1.0",
     "@types/express-jwt": "0.0.40",
     "@types/graphql-type-json": "^0.1.3",
@@ -13,10 +14,12 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/koa": "^2.0.48",
     "@types/koa-static": "^4.0.1",
+    "@types/minimist": "^1.2.0",
     "@types/sequelize": "^4.27.38",
     "@types/winston": "^2.4.4",
     "apollo-server-koa": "^2.4.8",
     "bcrypt": "^3.0.3",
+    "chalk": "^2.4.2",
     "dotenv": "^6.2.0",
     "graphql": "^14.0.2",
     "graphql-type-json": "^0.2.1",
@@ -25,23 +28,26 @@
     "koa": "^2.7.0",
     "koa-jwt": "^3.5.1",
     "koa-static": "^5.0.0",
+    "minimist": "^1.2.0",
     "mysql2": "^1.6.5",
     "nodemon": "^1.18.9",
     "pg": "^7.7.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^4.42.1",
     "sequelize-typescript": "^0.6.7",
-    "ts-node": "^7.0.1",
     "tslint": "^5.12.0",
     "type-graphql": "^0.16.0",
     "typescript": "^3.2.2",
     "winston": "^3.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "ts-node": "^7.0.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node_modules/.bin/nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec './node_modules/.bin/ts-node' src/app.ts",
-    "start": "pm2 start --interpreter /home/bschulte/.nvm/versions/node/v10.14.2/bin/ts-node ./src/app.ts --name dnd-v2"
+    "start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name dnd-v2",
+    "cli": "./node_modules/.bin/ts-node scripts/cli.ts || exit 0"
   },
   "author": "Brian Schulte",
   "license": "ISC"

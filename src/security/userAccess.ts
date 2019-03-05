@@ -1,4 +1,4 @@
-import { User } from "../modules/user/user.model";
+import User from "../modules/user/user.model";
 
 // This will verify if the authenticated user has access to
 // the given resource. This can be that the user directly
