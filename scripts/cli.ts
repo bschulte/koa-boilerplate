@@ -107,7 +107,11 @@ const runCmd = async (
   const commandArgs = argv._;
 
   if (commandArgs.length === 0) {
-    console.log(chalk.red("Error:"), "Please enter a command");
+    console.log(
+      chalk.red("Error:"),
+      "Please enter a command, available commands:"
+    );
+    printCommandList(cmds);
     process.exit(-1);
   }
 

@@ -1,16 +1,8 @@
 import User from "./user.model";
-import { UserInput } from "./dtos/UserInput";
 import { randomStr } from "../../helpers/util";
+import { hashString } from "../../security/authentication";
 
 class UserService {
-  public async findOneById(userId: number): Promise<User> {
-    return await User.findOne({ where: { id: userId } });
-  }
-
-  public async findOneByEmail(email: string): Promise<User> {
-    return await User.findOne({ where: { email } });
-  }
-
   /**
    * Create a new user. Will return the generated password for the user
    *
@@ -24,6 +16,27 @@ class UserService {
     });
 
     return randomPassword;
+  }
+
+  public async changePassword(
+    email: string,
+    newPass: string
+  ): Promise<boolean> {
+    const hashedPass = hashString(newPass);
+    const [numUsersUpdated] = await User.update(
+      { password: hashedPass },
+      { where: { email } }
+    );
+
+    return numUsersUpdated === 1;
+  }
+
+  public async findOneById(userId: number): Promise<User> {
+    return await User.findOne({ where: { id: userId } });
+  }
+
+  public async findOneByEmail(email: string): Promise<User> {
+    return await User.findOne({ where: { email } });
   }
 }
 

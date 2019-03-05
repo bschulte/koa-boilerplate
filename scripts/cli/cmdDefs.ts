@@ -1,4 +1,4 @@
-import { cliCreateUser } from "./user";
+import { cliCreateUser, cliChangePass } from "./user";
 
 export const FINAL_CMD = "finalCmd";
 
@@ -43,7 +43,8 @@ const userCmds = {
         description: "New password to switch to",
         type: "string"
       }
-    ]
+    ],
+    handler: cliChangePass
   }
 };
 
