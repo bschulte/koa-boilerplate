@@ -4,12 +4,13 @@ import jwt from "jsonwebtoken";
 import User from "./user.model";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
-import { comparePasswords, hashString } from "../../security/authentication";
+import { comparePasswords } from "../../security/authentication";
 import { ADMIN } from "../../security/authChecker";
 
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
+  @Authorized()
   public async user(@Ctx() ctx: any) {
     console.log("ctx:", ctx);
     return userService.findOneById(ctx.user.id);

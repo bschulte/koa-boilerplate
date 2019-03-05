@@ -29,11 +29,7 @@ const schema = buildSchemaSync({
 const app = new Koa();
 
 // Setup JWT authentication for everything
-app.use(
-  jwt({ secret: APP_KEY, passthrough: true }).unless({
-    path: [/^\/public/]
-  })
-);
+app.use(jwt({ secret: APP_KEY, passthrough: true }));
 
 // Static files
 app.use(serve(path.join(__dirname, "..", "public")));

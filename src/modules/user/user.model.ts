@@ -18,7 +18,7 @@ export default class User extends Model<User> {
     instance.password = hashString(instance.password);
   }
 
-  @Field()
+  @Column
   public id: number;
 
   @Field()
