@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import path from "path";
-import Koa from "koa";
+import Koa, { Context } from "koa";
 import jwt from "koa-jwt";
 import serve from "koa-static";
 import { ApolloServer, Request } from "apollo-server-koa";
@@ -29,15 +29,19 @@ const schema = buildSchemaSync({
 const app = new Koa();
 
 // Setup JWT authentication for everything
-app.use(jwt({ secret: APP_KEY }).unless({ path: [/^\/public/] }));
+app.use(
+  jwt({ secret: APP_KEY, passthrough: true }).unless({
+    path: [/^\/public/]
+  })
+);
 
-// Static files for the React app
+// Static files
 app.use(serve(path.join(__dirname, "..", "public")));
 
 const server = new ApolloServer({
   schema,
-  context: ({ req }: { req: Request & { user: User } }) => {
-    return { req, user: req.user };
+  context: ({ ctx }: { ctx: Context & { user: User } }) => {
+    return { ctx, user: ctx.state.user };
   },
   playground: NODE_ENV === "development"
 });
