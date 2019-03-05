@@ -10,23 +10,23 @@ import { ADMIN } from "../../security/authChecker";
 @Resolver(User)
 export class UserResolver {
   @Query(() => User)
+  @Authorized()
   public async user(@Ctx() ctx: any) {
     return userService.findOneById(ctx.user.id);
   }
 
-  @Mutation(() => User)
+  @Mutation(() => String)
   @Authorized([ADMIN])
   public async createUser(@Arg("newUserData") newUserData: UserInput) {
     // Check if user with the given email exists already
     const user = await userService.findOneByEmail(newUserData.email);
+
     if (user) {
       console.log("User already exists with email:", newUserData.email);
       throw new Error("User exists already");
     }
 
-    newUserData.password = hashString(newUserData.password);
-
-    return await userService.create(newUserData);
+    return await userService.create(newUserData.email);
   }
 
   @Mutation(() => String)

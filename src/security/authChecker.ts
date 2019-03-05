@@ -22,6 +22,7 @@ export const authChecker: AuthChecker = async (
 
   // The resource only requires that there is an authenticated user
   if (user && roles.length === 0) {
+    console.log("Validated user");
     return true;
   }
 

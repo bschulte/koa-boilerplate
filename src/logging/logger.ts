@@ -1,5 +1,6 @@
 import { format, createLogger, transports, info } from "winston";
 import { TransformableInfo } from "logform";
+import moment from "moment";
 
 export const DEBUG = "debug";
 export const INFO = "info";
@@ -9,7 +10,9 @@ export const ERROR = "error";
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 const myFormat = format.printf((info: TransformableInfo) => {
-  return `${info.timestamp} [${info.level}] ${info.message}`;
+  return `${moment(info.timestamp).format("L - LTS")} [${info.level}] ${
+    info.message
+  }`;
 });
 
 const logger = createLogger({
@@ -41,7 +44,10 @@ const sqlLogger = createLogger({
 });
 
 export const log = (level: LogLevel, message: string, ...other: any[]) => {
-  logger.log(level, `${message} ${other.length > 0 && JSON.stringify(other)}`);
+  logger.log(
+    level,
+    `${message} ${other.map((part: any) => JSON.stringify(part)).join(", ")}`
+  );
 };
 
 export const sqlLog = (message: string) => {

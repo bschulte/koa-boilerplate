@@ -6,10 +6,6 @@ import serve from "koa-static";
 import { ApolloServer, Request } from "apollo-server-koa";
 
 import { buildSchemaSync } from "type-graphql";
-import { Sequelize } from "sequelize-typescript";
-
-import dotenv from "dotenv";
-dotenv.config();
 
 import User from "./modules/user/user.model";
 import { authChecker } from "./security/authChecker";
