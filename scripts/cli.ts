@@ -84,7 +84,7 @@ const runCmd = async (
       process.exit(-2);
     }
 
-    runCmd(nextCmd, currentTree[currentCmd], commandArgs.slice(1));
+    await runCmd(nextCmd, currentTree[currentCmd], commandArgs.slice(1));
   }
 };
 
@@ -100,4 +100,5 @@ const runCmd = async (
   }
 
   await runCmd(commandArgs[0], cmds, commandArgs.slice(1));
+  process.exit();
 })();

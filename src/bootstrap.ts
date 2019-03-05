@@ -20,7 +20,8 @@ export const bootstrap = async () => {
     database: DB_NAME,
     username: DB_USER,
     password: DB_PASS,
-    modelPaths: [__dirname + "/**/*.model.ts"]
+    modelPaths: [__dirname + "/**/*.model.ts"],
+    operatorsAliases: false
   });
 
   await sequelize.sync({

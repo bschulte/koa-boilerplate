@@ -25,9 +25,7 @@ export const cmds = {
           type: "string"
         }
       ],
-      handler: (argv: any) => {
-        cliCreateUser(argv);
-      }
+      handler: cliCreateUser
     }
   }
 };
