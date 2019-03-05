@@ -5,12 +5,19 @@ import {
   Column,
   CreatedAt,
   UpdatedAt,
-  Model
+  Model,
+  BeforeCreate
 } from "sequelize-typescript";
+import { hashString } from "../../security/authentication";
 
 @Table
 @ObjectType({ description: "User model" })
 export default class User extends Model<User> {
+  @BeforeCreate
+  private static hashPassword(instance: User) {
+    instance.password = hashString(instance.password);
+  }
+
   @Field()
   public id: number;
 
