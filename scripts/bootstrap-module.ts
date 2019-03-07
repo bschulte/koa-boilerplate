@@ -77,6 +77,16 @@ export class ${name}Resolver {
   }
 }`;
 
+const controller = `import { Controller, Get } from "routing-controllers";
+
+@Controller()
+export class ${name}Controller {
+  @Get("/${fileName}")
+  public getAll() {
+    return "This gets all of these";
+  }
+}`;
+
 const MODULES_PATH = __dirname + "/../src/modules";
 
 if (!existsSync(`${MODULES_PATH}/${fileName}`)) {
@@ -89,3 +99,5 @@ safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.entity.ts`, entity);
 safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.service.ts`, service);
 // Resolver
 safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.resolver.ts`, resolver);
+// Controller
+safeWrite(`${MODULES_PATH}/${fileName}/${fileName}.controller.ts`, controller);
