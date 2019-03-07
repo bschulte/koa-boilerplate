@@ -11,6 +11,7 @@ import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
 import { log, DEBUG, ERROR } from "./logging/logger";
 import { bootstrap } from "./bootstrap";
+import { userService } from "./modules/user/user.service";
 
 const {
   NODE_ENV = "development",
@@ -20,32 +21,33 @@ const {
 
 const GRAPHQL_PATH = "/graphql";
 
-const schema = buildSchemaSync({
-  resolvers: [`${__dirname}/**/*.resolver.ts`],
-  authChecker,
-  dateScalarMode: "timestamp"
-});
-
-const app = new Koa();
-
-// Setup JWT authentication for everything
-app.use(jwt({ secret: APP_KEY, passthrough: true }));
-
-// Static files
-app.use(serve(path.join(__dirname, "..", "public")));
-
-const server = new ApolloServer({
-  schema,
-  context: ({ ctx }: { ctx: Context & { user: User } }) => {
-    return { ctx, user: ctx.state.user };
-  },
-  playground: NODE_ENV === "development"
-});
-
-// Apply GraphQL middleware to the express app
-server.applyMiddleware({ app, path: GRAPHQL_PATH });
-
 (async () => {
+  const schema = buildSchemaSync({
+    resolvers: [`${__dirname}/**/*.resolver.ts`],
+    authChecker,
+    dateScalarMode: "timestamp"
+  });
+
+  const app = new Koa();
+
+  // Setup JWT authentication for everything
+  app.use(jwt({ secret: APP_KEY, passthrough: true }));
+
+  // Static files
+  app.use(serve(path.join(__dirname, "..", "public")));
+
+  const server = new ApolloServer({
+    schema,
+    context: async ({ ctx }: { ctx: Context & { user: User } }) => {
+      const user = await userService.findOneById(ctx.state.user.id);
+      return { ctx, user };
+    },
+    playground: NODE_ENV === "development"
+  });
+
+  // Apply GraphQL middleware to the express app
+  server.applyMiddleware({ app, path: GRAPHQL_PATH });
+
   try {
     // Setup DB connection
     await bootstrap();

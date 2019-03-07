@@ -6,6 +6,7 @@ import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
 import { ADMIN } from "../../security/auth-checker";
+import { log, WARN, ERROR } from "../../logging/logger";
 
 @Resolver(User)
 export class UserResolver {
@@ -22,7 +23,7 @@ export class UserResolver {
     const user = await userService.findOneByEmail(newUserData.email);
 
     if (user) {
-      console.log("User already exists with email:", newUserData.email);
+      log(WARN, "User already exists with email:", newUserData.email);
       throw new Error("User exists already");
     }
 
@@ -34,13 +35,13 @@ export class UserResolver {
     const user = await userService.findOneByEmail(email);
     // Check if the user exists
     if (!user) {
-      console.log("Could not find user for email:", email);
+      log(ERROR, "Could not find user for email:", email);
       throw new Error("Could not find user");
     }
 
     // Check if the password is correct
     if (!comparePasswords(password, user.password)) {
-      console.log("Invalid password entered for user:", email);
+      log(ERROR, "Invalid password entered for user:", email);
       throw new Error("Invalid password");
     }
 

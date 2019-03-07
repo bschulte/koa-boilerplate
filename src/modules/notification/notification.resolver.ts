@@ -31,6 +31,6 @@ export class NotificationResolver {
 
   @FieldResolver(() => NotificationContent)
   public async content(@Root() notification: Notification) {
-    return await notificationService.findContentById(notification.content.id);
+    return await notificationService.findContentById(notification.contentId);
   }
 }

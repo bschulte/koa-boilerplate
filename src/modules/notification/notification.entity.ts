@@ -44,4 +44,6 @@ export default class Notification {
     { cascade: true }
   )
   public content: NotificationContent;
+  @Column()
+  public contentId: number;
 }
