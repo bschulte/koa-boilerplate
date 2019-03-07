@@ -12,9 +12,8 @@ import { authChecker } from "./security/auth-checker";
 import { log, DEBUG, ERROR } from "./logging/logger";
 import { bootstrap } from "./bootstrap";
 import { userService } from "./modules/user/user.service";
-import { isDevEnv } from "./common/util";
+import { isDevEnv } from "./common/helpers/util";
 import { createKoaServer } from "routing-controllers";
-import { UserController } from "./modules/user/user.controller";
 
 const { PORT = 5000, APP_KEY = "super secret" } = process.env;
 
@@ -28,7 +27,7 @@ const GRAPHQL_PATH = "/graphql";
   });
 
   const app = createKoaServer({
-    controllers: [UserController]
+    controllers: [__dirname + "/modules/**/*.controller.ts"]
   });
 
   // Setup JWT authentication for everything

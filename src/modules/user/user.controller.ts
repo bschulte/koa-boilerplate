@@ -1,9 +1,10 @@
 import { Controller, Get } from "routing-controllers";
+import { emailerService } from "../emailer/emailer.service";
 
 @Controller()
 export class UserController {
   @Get("/user")
-  public getAll() {
+  public async getAll() {
     return "This gets all users";
   }
 }

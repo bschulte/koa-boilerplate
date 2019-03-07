@@ -1,5 +1,5 @@
 import User from "./user.entity";
-import { randomStr } from "../../helpers/util";
+import { randomStr } from "../../common/helpers/util";
 import { hashString } from "../../security/authentication";
 import UserAccess from "../userAccess/user-access.entity";
 
@@ -55,6 +55,10 @@ class UserService {
     // We have to manually delete one-to-one relationships due
     // to how mysql delete cascades work
     await userAccessService.delete(user.accessId);
+  }
+
+  public async save(user: User) {
+    await this.repo().save(user);
   }
 
   private repo(): Repository<User> {

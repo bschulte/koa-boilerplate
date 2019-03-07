@@ -9,3 +9,9 @@ export const randomStr = (length: number): string => {
 
   return text;
 };
+
+export const isDevEnv = (): boolean => {
+  return (
+    process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test"
+  );
+};

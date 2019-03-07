@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { createConnection } from "typeorm";
 import { SqlLogger } from "./logging/SqlLogger";
-import { isDevEnv } from "./common/util";
+import { isDevEnv } from "./common/helpers/util";
 dotenv.config();
 
 const { DB_HOST, DB_NAME, DB_USER, DB_PASS } = process.env;

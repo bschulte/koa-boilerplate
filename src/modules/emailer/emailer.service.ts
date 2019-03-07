@@ -4,7 +4,7 @@ import * as _ from "lodash";
 import { log, DEBUG } from "../../logging/logger";
 import { SendDto } from "./dtos/send.dto";
 import { MailOptions } from "nodemailer/lib/smtp-pool";
-import { isDevEnv } from "../../common/util";
+import { isDevEnv } from "../../common/helpers/util";
 import { PASSWORD_RESET_SNIPPET } from "../../common/constants";
 import { passwordResetSnippet } from "./templates/password-reset.snippet";
 import { generalTemplate } from "./templates/general";
