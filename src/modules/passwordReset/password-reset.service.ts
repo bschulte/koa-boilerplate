@@ -3,7 +3,6 @@ import moment from "moment";
 import * as owasp from "owasp-password-strength-test";
 
 import { EMAIL_FROM, PASSWORD_RESET_SNIPPET } from "../../common/constants";
-
 import { log, DEBUG, INFO, WARN } from "../../logging/logger";
 import User from "../user/user.entity";
 import { userService } from "../user/user.service";
@@ -24,8 +23,6 @@ class PasswordResetService {
 
     const token = randomStr(36);
 
-    log(DEBUG, `Token created: ${token}`);
-
     user.resetToken = bcrypt.hashSync(token, 10);
     user.resetTokenExpires = moment()
       .add(2, "hour")
@@ -34,7 +31,7 @@ class PasswordResetService {
 
     await this.sendPasswordResetEmail(user, token);
 
-    return;
+    return true;
   }
 
   public async resetPassword(
@@ -72,6 +69,8 @@ class PasswordResetService {
     await userService.save(user);
 
     log(DEBUG, `Reset password successfully for user: ${user.email}`);
+
+    return true;
   }
 
   private validatePasswordStrength(newPassword: string, user: User) {

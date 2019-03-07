@@ -1,9 +1,9 @@
 import { CreateResetDto } from "./dtos/createReset.dto";
 import { passwordResetService } from "./password-reset.service";
 import { ResetDto } from "./dtos/reset.dto";
-import { JsonController, Post, Patch, Body } from "routing-controllers";
+import { Post, Patch, Body, Controller } from "routing-controllers";
 
-@JsonController("/password-reset")
+@Controller("/password-reset")
 export class PasswordResetController {
   @Post()
   public async createPasswordReset(@Body()
