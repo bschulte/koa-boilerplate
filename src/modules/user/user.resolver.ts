@@ -1,12 +1,25 @@
-import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  Authorized,
+  Ctx,
+  FieldResolver,
+  Root
+} from "type-graphql";
 import jwt from "jsonwebtoken";
 
 import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
-import { ADMIN } from "../../security/auth-checker";
 import { log, WARN, ERROR } from "../../logging/logger";
+import { roles } from "../../common/constants";
+import { userAccessService } from "../userAccess/user-access.service";
+import { userConfigService } from "../user-config/user-config.service";
+import UserAccess from "../userAccess/user-access.entity";
+import UserConfig from "../user-config/user-config.entity";
 
 @Resolver(User)
 export class UserResolver {
@@ -17,7 +30,7 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  @Authorized([ADMIN])
+  @Authorized([roles.ADMIN])
   public async createUser(@Arg("newUserData") newUserData: UserInput) {
     // Check if user with the given email exists already
     const user = await userService.findOneByEmail(newUserData.email);
@@ -52,5 +65,15 @@ export class UserResolver {
         expiresIn: "2d"
       }
     );
+  }
+
+  @FieldResolver(() => UserAccess)
+  public async access(@Root() user: User) {
+    return await userAccessService.findOneById(user.accessId);
+  }
+
+  @FieldResolver(() => UserConfig)
+  public async config(@Root() user: User) {
+    return await userConfigService.findOneById(user.configId);
   }
 }

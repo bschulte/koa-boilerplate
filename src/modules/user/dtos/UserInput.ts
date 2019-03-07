@@ -7,6 +7,6 @@ export class UserInput {
   @IsEmail()
   public email!: string;
 
-  @Field()
+  @Field({ nullable: true })
   public password!: string;
 }

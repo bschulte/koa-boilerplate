@@ -9,7 +9,6 @@ import {
 } from "type-graphql";
 
 import { notificationService } from "./notification.service";
-import { ADMIN } from "../../security/auth-checker";
 import { authorizeResource } from "../../security/access-control";
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
