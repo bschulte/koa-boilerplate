@@ -35,6 +35,12 @@ export default class User {
   @UpdateDateColumn()
   public updatedAt: Date;
 
+  @Column({ nullable: true })
+  public resetToken: string;
+
+  @Column({ nullable: true })
+  public resetTokenExpires: Date;
+
   @OneToOne(() => UserAccess, { cascade: true, eager: true })
   @JoinColumn()
   public access: UserAccess;
