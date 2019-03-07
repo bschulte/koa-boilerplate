@@ -4,6 +4,10 @@ import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
 
 class NotificationService {
+  public async findAll(userId: number) {
+    return await this.repo().find({ userId });
+  }
+
   public async findOneByUuid(uuid: string): Promise<Notification> {
     return await this.repo().findOne({ uuid });
   }

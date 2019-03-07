@@ -16,6 +16,12 @@ import NotificationContent from "./notification-content.entity";
 
 @Resolver(Notification)
 export class NotificationResolver {
+  @Query(() => [Notification])
+  @Authorized()
+  public async notifications(@Ctx() ctx: any) {
+    return await notificationService.findAll(ctx.user.id);
+  }
+
   @Query(() => Notification)
   @Authorized()
   public async notification(@Ctx() ctx: any, @Arg("uuid") uuid: string) {
