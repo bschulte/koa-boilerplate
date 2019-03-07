@@ -9,7 +9,6 @@ export class UserAccessResolver {
   @Query(() => UserAccess)
   @Authorized()
   public async userAccess(@Ctx() ctx: any) {
-    console.log("ctx:", ctx);
     return userAccessService.findOneById(ctx.user.id);
   }
 }

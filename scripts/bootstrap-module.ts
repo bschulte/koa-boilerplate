@@ -72,9 +72,8 @@ import { ADMIN } from "../../security/auth-checker";
 export class ${name}Resolver {
   @Query(() => ${name})
   @Authorized()
-  public async ${varName}(@Ctx() ctx: any) {
-    console.log("ctx:", ctx);
-    return ${varName}Service.findOneById(ctx.user.id);
+  public async ${varName}(@Ctx() ctx: any, @Arg('id') id: number) {
+    return ${varName}Service.findOneById(id);
   }
 }`;
 

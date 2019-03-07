@@ -35,7 +35,7 @@ export default class User {
   @UpdateDateColumn()
   public updatedAt: Date;
 
-  @OneToOne(() => UserAccess, { cascade: true })
+  @OneToOne(() => UserAccess, { cascade: true, eager: true })
   @JoinColumn()
   public access: UserAccess;
   @Column()
