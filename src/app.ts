@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import path from "path";
-import Koa, { Context } from "koa";
+import { Context } from "koa";
 import jwt from "koa-jwt";
 import serve from "koa-static";
 import { ApolloServer } from "apollo-server-koa";
@@ -12,12 +12,11 @@ import { authChecker } from "./security/auth-checker";
 import { log, DEBUG, ERROR } from "./logging/logger";
 import { bootstrap } from "./bootstrap";
 import { userService } from "./modules/user/user.service";
+import { isDevEnv } from "./common/util";
+import { createKoaServer } from "routing-controllers";
+import { UserController } from "./modules/user/user.controller";
 
-const {
-  NODE_ENV = "development",
-  PORT = 5000,
-  APP_KEY = "super secret"
-} = process.env;
+const { PORT = 5000, APP_KEY = "super secret" } = process.env;
 
 const GRAPHQL_PATH = "/graphql";
 
@@ -28,7 +27,9 @@ const GRAPHQL_PATH = "/graphql";
     dateScalarMode: "timestamp"
   });
 
-  const app = new Koa();
+  const app = createKoaServer({
+    controllers: [UserController]
+  });
 
   // Setup JWT authentication for everything
   app.use(jwt({ secret: APP_KEY, passthrough: true }));
@@ -39,10 +40,13 @@ const GRAPHQL_PATH = "/graphql";
   const server = new ApolloServer({
     schema,
     context: async ({ ctx }: { ctx: Context & { user: User } }) => {
-      const user = await userService.findOneById(ctx.state.user.id);
-      return { ctx, user };
+      if (ctx.state.user) {
+        const user = await userService.findOneById(ctx.state.user.id);
+        return { ctx, user };
+      }
+      return { ctx, user: null };
     },
-    playground: NODE_ENV === "development"
+    playground: isDevEnv()
   });
 
   // Apply GraphQL middleware to the express app
