@@ -3,16 +3,10 @@ import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 import UserConfig from "./user-config.entity";
 import { userConfigService } from "./user-config.service";
 import { roles } from "../../common/constants";
-import { log, DEBUG, INFO } from "../../logging/logger";
+import { log, INFO } from "../../logging/logger";
 
 @Resolver(UserConfig)
 export class UserConfigResolver {
-  @Query(() => UserConfig)
-  @Authorized()
-  public async userConfig(@Ctx() ctx: any, @Arg("id") id: number) {
-    return await userConfigService.findOneById(id);
-  }
-
   @Mutation(() => UserConfig)
   @Authorized([roles.ADMIN])
   public async updateUserConfig(
