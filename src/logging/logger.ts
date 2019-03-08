@@ -11,72 +11,104 @@ const ERROR = "error";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
-const myFormat = format.printf((info: TransformableInfo) => {
-  return `${moment(info.timestamp).format("L LTS")} ${als.get("requestId") ||
-    "-"} ${als.get("user") || "-"} [${info.level}] ${info.message}`;
-});
-
-const logger = createLogger({
-  level: "silly",
-  transports: [
-    new transports.File({
-      filename: `${__dirname}/../../logs/server.log`,
-      maxFiles: 20,
-      maxsize: 1024 * 1000 * 5, // 5MB
-      tailable: true,
-      format: format.combine(format.timestamp(), myFormat)
-    }),
-    new transports.Console({
-      format: format.combine(format.timestamp(), format.colorize(), myFormat)
-    })
-  ]
-});
-
-const sqlLogger = createLogger({
-  level: "silly",
-  transports: [
-    new transports.File({
-      filename: `${__dirname}/../../logs/sql.log`,
-      maxFiles: 20,
-      maxsize: 1024 * 1000 * 5, // 5MB
-      tailable: true
-    })
-  ]
-});
-
 export class Logger {
+  // Used to calculate the time between log messages
+  private static lastMessageTimestamp = new Date().getTime();
+
+  private myFormat = format.printf((info: TransformableInfo) => {
+    return `${moment(info.timestamp).format("L LTS")} ${als.get("requestId") ||
+      "-"} ${als.get("user") || "-"} [${info.level}] [${chalk.magenta(
+      this.name
+    )}] ${info.message} ${chalk.blue(`+${this.getTimeDiff()}ms`)}`;
+  });
+
+  private myUncoloredFormat = format.printf((info: TransformableInfo) => {
+    const self = this;
+    return `${moment(info.timestamp).format("L LTS")} ${als.get("requestId") ||
+      "-"} ${als.get("user") || "-"} [${info.level}] [${this.name}] ${
+      info.message
+    } +${this.getTimeDiff()}ms`;
+  });
+
+  private logger = createLogger({
+    level: "silly",
+    transports: [
+      new transports.File({
+        filename: `${__dirname}/../../logs/server.log`,
+        maxFiles: 20,
+        maxsize: 1024 * 1000 * 5, // 5MB
+        format: format.combine(format.timestamp(), this.myUncoloredFormat)
+      }),
+      new transports.File({
+        filename: `${__dirname}/../../logs/server.tail.log`,
+        maxFiles: 1,
+        maxsize: 1024 * 1000 * 5, // 5MB
+        tailable: true,
+        format: format.combine(
+          format.timestamp(),
+          format.colorize(),
+          this.myFormat
+        )
+      }),
+      new transports.Console({
+        format: format.combine(
+          format.timestamp(),
+          format.colorize(),
+          this.myFormat
+        )
+      })
+    ]
+  });
+
+  private sqlLogger = createLogger({
+    level: "silly",
+    transports: [
+      new transports.File({
+        filename: `${__dirname}/../../logs/sql.log`,
+        maxFiles: 20,
+        maxsize: 1024 * 1000 * 5, // 5MB
+        tailable: true
+      })
+    ]
+  });
+
   private name: string;
 
   constructor(name: string) {
     this.name = name;
   }
 
-  public debug(message: string, ...other: any[]) {
-    this.log(DEBUG, message, other);
+  public debug(message: string) {
+    this.log(DEBUG, message);
   }
 
-  public info(message: string, ...other: any[]) {
-    this.log(INFO, message, other);
+  public info(message: string) {
+    this.log(INFO, message);
   }
 
-  public warn(message: string, ...other: any[]) {
-    this.log(WARN, message, other);
+  public warn(message: string) {
+    this.log(WARN, message);
   }
 
-  public error(message: string, ...other: any[]) {
-    this.log(ERROR, message, other);
+  public error(message: string) {
+    this.log(ERROR, message);
+  }
+
+  public write(message: string) {
+    this.log(INFO, message);
   }
 
   public sqlLog(message: string) {
-    sqlLogger.log(DEBUG, message);
+    this.sqlLogger.log(DEBUG, message);
   }
 
-  private log(level: LogLevel, message: string, ...other: any[]) {
-    logger.log(
-      level,
-      `[${chalk.magenta(this.name)}] ${message} ${other
-        .map((part: any) => JSON.stringify(part))
-        .join(", ")}`
-    );
+  private log(level: LogLevel, message: string) {
+    this.logger.log(level, `${message.replace("\n", "")}`);
+
+    Logger.lastMessageTimestamp = new Date().getTime();
+  }
+
+  private getTimeDiff() {
+    return new Date().getTime() - Logger.lastMessageTimestamp;
   }
 }

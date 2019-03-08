@@ -4,6 +4,7 @@ import Koa, { Context } from "koa";
 import bodyParser from "koa-bodyparser";
 import jwt from "koa-jwt";
 import serve from "koa-static";
+import morgan from "koa-morgan";
 import als from "async-local-storage";
 import { v4 as uuid } from "uuid";
 import { ApolloServer } from "apollo-server-koa";
@@ -69,6 +70,9 @@ const GRAPHQL_PATH = "/graphql";
 
   // Static files
   app.use(serve(path.join(__dirname, "..", "public")));
+
+  // Morgan logger for requests
+  app.use(morgan("short", { stream: logger }));
 
   // Apollo server
   const server = new ApolloServer({
