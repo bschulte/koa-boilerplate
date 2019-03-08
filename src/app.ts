@@ -41,8 +41,7 @@ const GRAPHQL_PATH = "/graphql";
     try {
       await next();
     } catch (err) {
-      console.log("Caught error");
-      console.log(err);
+      ctx.throw(err.message, err.status);
     }
   });
 
