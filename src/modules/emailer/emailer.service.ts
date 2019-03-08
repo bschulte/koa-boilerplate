@@ -1,11 +1,12 @@
 import * as nodemailer from "nodemailer";
 import * as _ from "lodash";
+import createError from "http-errors";
 
-import { log, DEBUG } from "../../logging/logger";
+import { log, DEBUG, ERROR } from "../../logging/logger";
 import { SendDto } from "./dtos/send.dto";
 import { MailOptions } from "nodemailer/lib/smtp-pool";
 import { isDevEnv } from "../../common/helpers/util";
-import { PASSWORD_RESET_SNIPPET } from "../../common/constants";
+import { PASSWORD_RESET_SNIPPET, StatusCode } from "../../common/constants";
 import { passwordResetSnippet } from "./templates/password-reset.snippet";
 import { generalTemplate } from "./templates/general";
 
@@ -32,7 +33,6 @@ class EmailerService {
   }
 
   private async getTransporter() {
-    const { NODE_ENV } = process.env;
     /* istanbul ignore else */
     if (isDevEnv()) {
       const testAccount = await nodemailer.createTestAccount();
@@ -66,7 +66,11 @@ class EmailerService {
       case PASSWORD_RESET_SNIPPET:
         return passwordResetSnippet(params.token);
       default:
-        throw new Error("Invalid email snippet provided");
+        log(ERROR, "Invalid email snippet provided");
+        throw createError(
+          StatusCode.SERVER_ERROR,
+          "Invalid email snippet provided"
+        );
     }
   }
 }

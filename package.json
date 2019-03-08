@@ -53,6 +53,7 @@
     "prompts": "^2.0.3",
     "rand-token": "^0.4.0",
     "reflect-metadata": "^0.1.13",
+    "tsconfig-paths": "^3.8.0",
     "tslint": "^5.12.0",
     "type-graphql": "^0.16.0",
     "typeorm": "^0.2.14",
@@ -65,8 +66,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node_modules/.bin/nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec './node_modules/.bin/ts-node' src/app.ts",
+    "dev": "nodemon",
     "start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa",
+    "start:debug": "nodemon --config nodemon-debug.json",
     "cli": "./node_modules/.bin/ts-node scripts/cli.ts || exit 0"
   },
   "author": "Brian Schulte",
