@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import path from "path";
-import { Context } from "koa";
+import Koa, { Context } from "koa";
+import bodyParser from "koa-bodyparser";
 import jwt from "koa-jwt";
 import serve from "koa-static";
 import als from "async-local-storage";
@@ -15,7 +16,7 @@ import { log, DEBUG, ERROR } from "./logging/logger";
 import { bootstrap } from "./bootstrap";
 import { userService } from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";
-import { createKoaServer } from "routing-controllers";
+import { passwordResetRouter } from "./modules/passwordReset/password-reset.controller";
 
 const { PORT = 5000, APP_KEY = "super secret" } = process.env;
 
@@ -30,8 +31,17 @@ const GRAPHQL_PATH = "/graphql";
 
   // Create the server with the routing controllers function in
   // order to feed in all our controllers
-  const app = createKoaServer({
-    controllers: [__dirname + "/modules/**/*.controller.ts"]
+  const app = new Koa();
+  app.use(bodyParser());
+
+  // Global exception handler
+  app.use(async (ctx: Context, next: any) => {
+    try {
+      await next();
+    } catch (err) {
+      console.log("Caught error");
+      console.log(err);
+    }
   });
 
   // Enable the async local storage for the application
@@ -43,15 +53,6 @@ const GRAPHQL_PATH = "/graphql";
     als.set("requestId", requestId.replace("-", "").slice(0, 12));
 
     await next();
-  });
-
-  // Global exception handler
-  app.use(async (ctx: Context, next: any) => {
-    try {
-      await next();
-    } catch (err) {
-      console.log(err);
-    }
   });
 
   // Setup JWT authentication for everything
@@ -83,6 +84,9 @@ const GRAPHQL_PATH = "/graphql";
 
   // Apply GraphQL middleware to the express app
   server.applyMiddleware({ app, path: GRAPHQL_PATH });
+
+  // Standard REST routes
+  app.use(passwordResetRouter.routes());
 
   try {
     // Setup DB connection

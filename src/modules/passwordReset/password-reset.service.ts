@@ -1,8 +1,13 @@
 import * as bcrypt from "bcrypt";
 import moment from "moment";
 import * as owasp from "owasp-password-strength-test";
+import createError from "http-errors";
 
-import { EMAIL_FROM, PASSWORD_RESET_SNIPPET } from "../../common/constants";
+import {
+  EMAIL_FROM,
+  PASSWORD_RESET_SNIPPET,
+  StatusCode
+} from "../../common/constants";
 import { log, DEBUG, INFO, WARN } from "../../logging/logger";
 import User from "../user/user.entity";
 import { userService } from "../user/user.service";
@@ -44,13 +49,11 @@ class PasswordResetService {
     log(INFO, `Attempting to reset password for: ${user.email}`);
     if (!user) {
       log(WARN, "Invalid token provided for password reset");
-      // TODO: Convert to HTTP Exception
-      throw new Error("Invalid token");
+      throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
     }
     if (!user.resetToken) {
       log(WARN, `User does not have password reset token: ${user.email}`);
-      // TODO: Convert to HTTP Exception
-      throw new Error("Invalid token");
+      throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
     }
 
     // Check if the token has expired
@@ -80,8 +83,8 @@ class PasswordResetService {
         WARN,
         `Non-strong password entered for new password, user: ${user.email}`
       );
-      // TODO: Convert to HTTP Exception
-      throw new Error(
+      throw createError(
+        StatusCode.BAD_REQUEST,
         `Invalid new password, errors: ${passTestResult.errors.join(" ")}`
       );
     }
@@ -97,8 +100,7 @@ class PasswordResetService {
         WARN,
         `Passwords do not match for password reset, user: ${user.email}`
       );
-      // TODO: Convert to HTTP Exception
-      throw new Error("Passwords do not match");
+      throw createError(StatusCode.BAD_REQUEST, "Passwords do not match");
     }
   }
 
@@ -106,15 +108,13 @@ class PasswordResetService {
     const isCorrectToken = bcrypt.compareSync(token, user.resetToken);
     if (!isCorrectToken) {
       log(WARN, `User entered invalid token for password reset: ${user.email}`);
-      // TODO: Convert to HTTP Exception
-      throw new Error("Invalid token");
+      throw createError(StatusCode.BAD_REQUEST, "Invalid token");
     }
 
     const timeDiff = moment(user.resetTokenExpires).diff(moment(), "second");
     if (timeDiff < 0) {
       log(WARN, `Token has expired for user: ${user.email}`);
-      // TODO: Convert to HTTP Exception
-      throw new Error("Expired token");
+      throw createError(StatusCode.BAD_REQUEST, "Expired token");
     }
   }
 

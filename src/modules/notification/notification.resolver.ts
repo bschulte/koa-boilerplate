@@ -7,11 +7,13 @@ import {
   FieldResolver,
   Root
 } from "type-graphql";
+import createError from "http-errors";
 
 import { notificationService } from "./notification.service";
 import { authorizeResource } from "../../security/access-control";
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
+import { StatusCode } from "../../common/constants";
 
 @Resolver(Notification)
 export class NotificationResolver {
@@ -26,7 +28,7 @@ export class NotificationResolver {
   public async notification(@Ctx() ctx: any, @Arg("uuid") uuid: string) {
     const notification = await notificationService.findOneByUuid(uuid);
     if (!notification) {
-      throw new Error("Could not find notification");
+      createError(StatusCode.BAD_REQUEST, "Could not find notification");
     }
 
     authorizeResource(notification, ctx.user);
