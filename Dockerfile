@@ -11,8 +11,8 @@ RUN apk add --no-cache --virtual .gyp python make g++ \
   && npm install \
   && apk del .gyp
 
+RUN npm i -g pm2
+
 RUN node -v
 
-EXPOSE 5111
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "docker:pm2"]
