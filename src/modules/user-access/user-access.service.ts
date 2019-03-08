@@ -1,5 +1,7 @@
 import UserAccess from "./user-access.entity";
 import { getRepository, Repository } from "typeorm";
+import createError from "http-errors";
+import { StatusCode } from "../../common/constants";
 
 class UserAccessService {
   public async findOneById(userAccessId: number): Promise<UserAccess> {
@@ -11,8 +13,25 @@ class UserAccessService {
   }
 
   public async update(userAccessId: number, key: string, value: boolean) {
-    await this.repo().update({ id: userAccessId }, { [key]: value });
-    return await this.findOneById(userAccessId);
+    const userAccess = await this.findOneById(userAccessId);
+    if (!userAccess) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        "Could not find user access entry"
+      );
+    }
+
+    if (!(key in userAccess)) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        `Invalid user access key: ${key}`
+      );
+    }
+
+    userAccess[key] = value;
+    await this.save(userAccess);
+
+    return userAccess;
   }
 
   public async save(userAccess: UserAccess) {
