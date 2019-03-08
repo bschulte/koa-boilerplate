@@ -11,7 +11,8 @@
     "pm2:start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa",
     "start:debug": "nodemon --config nodemon-debug.json",
     "cli": "./node_modules/.bin/ts-node scripts/cli.ts || exit 0",
-    "docker:build": "docker build -t koa ."
+    "docker:build": "docker build -t koa .",
+    "docker:run": "docker run -p 5111:5111 koa"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -24,6 +25,7 @@
     "@types/jsonwebtoken": "^8.3.0",
     "@types/koa": "^2.0.48",
     "@types/koa-bodyparser": "^4.2.2",
+    "@types/koa-morgan": "^1.0.4",
     "@types/koa-router": "^7.0.40",
     "@types/koa-static": "^4.0.1",
     "@types/minimist": "^1.2.0",
@@ -48,6 +50,7 @@
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-jwt": "^3.5.1",
+    "koa-morgan": "^1.0.1",
     "koa-multer": "^1.0.2",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
