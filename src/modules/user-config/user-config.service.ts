@@ -6,6 +6,11 @@ class UserConfigService {
     return await this.repo().findOne(userConfigId);
   }
 
+  public async update(userConfigId: number, key: string, value: any) {
+    await this.repo().update(userConfigId, { [key]: value });
+    return await this.findOneById(userConfigId);
+  }
+
   public async delete(userConfigId: number) {
     await this.repo().delete(userConfigId);
   }

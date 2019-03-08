@@ -10,6 +10,15 @@ class UserAccessService {
     return await this.repo().delete(userAccessId);
   }
 
+  public async update(userAccessId: number, key: string, value: boolean) {
+    await this.repo().update({ id: userAccessId }, { [key]: value });
+    return await this.findOneById(userAccessId);
+  }
+
+  public async save(userAccess: UserAccess) {
+    return await this.repo().save(userAccess);
+  }
+
   private repo(): Repository<UserAccess> {
     return getRepository(UserAccess);
   }

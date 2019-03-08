@@ -1,4 +1,4 @@
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, Authorized } from "type-graphql";
 import {
   Entity,
   Column,
@@ -8,11 +8,13 @@ import {
   OneToOne
 } from "typeorm";
 import User from "../user/user.entity";
+import { roles } from "../../common/constants";
 
 @Entity()
 @ObjectType({ description: "UserAccess model" })
 export default class UserAccess {
   @PrimaryGeneratedColumn()
+  @Authorized(roles.ADMIN)
   public readonly id: number;
 
   @Field()

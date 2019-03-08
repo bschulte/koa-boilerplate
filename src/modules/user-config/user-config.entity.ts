@@ -1,4 +1,4 @@
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, Authorized } from "type-graphql";
 import {
   Entity,
   Column,
@@ -6,11 +6,13 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn
 } from "typeorm";
+import { roles } from "../../common/constants";
 
 @Entity()
 @ObjectType({ description: "UserConfig entity" })
 export default class UserConfig {
   @PrimaryGeneratedColumn()
+  @Authorized(roles.ADMIN)
   public readonly id: number;
 
   @Column({ default: "awesome-value" })
