@@ -13,6 +13,7 @@ import { roles } from "../../common/constants";
 export default class UserConfig {
   @PrimaryGeneratedColumn()
   @Authorized(roles.ADMIN)
+  @Field()
   public readonly id: number;
 
   @Column({ default: "awesome-value" })

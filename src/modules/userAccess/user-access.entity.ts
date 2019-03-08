@@ -15,6 +15,7 @@ import { roles } from "../../common/constants";
 export default class UserAccess {
   @PrimaryGeneratedColumn()
   @Authorized(roles.ADMIN)
+  @Field()
   public readonly id: number;
 
   @Field()

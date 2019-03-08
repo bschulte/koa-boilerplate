@@ -30,6 +30,15 @@ const GRAPHQL_PATH = "/graphql";
     controllers: [__dirname + "/modules/**/*.controller.ts"]
   });
 
+  // Global exception handler
+  app.use(async (ctx: Context, next: any) => {
+    try {
+      await next();
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   // Setup JWT authentication for everything
   app.use(jwt({ secret: APP_KEY, passthrough: true }));
 
