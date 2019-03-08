@@ -12,7 +12,7 @@ import { buildSchemaSync } from "type-graphql";
 
 import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
-import { Logger, DEBUG, ERROR } from "./logging/Logger";
+import { Logger } from "./logging/Logger";
 import { bootstrap } from "./bootstrap";
 import { userService } from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";

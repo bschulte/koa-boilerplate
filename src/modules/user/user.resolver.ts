@@ -14,7 +14,7 @@ import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
-import { Logger, WARN, ERROR } from "../../logging/Logger";
+import { Logger } from "../../logging/Logger";
 import { roles } from "../../common/constants";
 import { userAccessService } from "../user-access/user-access.service";
 import { userConfigService } from "../user-config/user-config.service";

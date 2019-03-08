@@ -3,7 +3,7 @@ import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 import UserConfig from "./user-config.entity";
 import { userConfigService } from "./user-config.service";
 import { roles } from "../../common/constants";
-import { Logger, INFO } from "../../logging/Logger";
+import { Logger } from "../../logging/Logger";
 
 @Resolver(UserConfig)
 export class UserConfigResolver {

@@ -8,7 +8,7 @@ import {
   PASSWORD_RESET_SNIPPET,
   StatusCode
 } from "../../common/constants";
-import { Logger, DEBUG, INFO, WARN } from "../../logging/Logger";
+import { Logger } from "../../logging/Logger";
 import User from "../user/user.entity";
 import { userService } from "../user/user.service";
 import { emailerService } from "../emailer/emailer.service";
