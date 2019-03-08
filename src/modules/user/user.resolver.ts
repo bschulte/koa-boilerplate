@@ -44,7 +44,7 @@ export class UserResolver {
     const user = await userService.findOneByEmail(newUserData.email);
 
     if (user) {
-      this.logger.warn("User already exists with email:", newUserData.email);
+      this.logger.warn(`User already exists with email: ${newUserData.email}`);
       throw new Error("User exists already");
     }
 
@@ -56,13 +56,13 @@ export class UserResolver {
     const user = await userService.findOneByEmail(email);
     // Check if the user exists
     if (!user) {
-      this.logger.error("Could not find user for email:", email);
+      this.logger.error(`Could not find user for email: ${email}`);
       throw new Error("Could not find user");
     }
 
     // Check if the password is correct
     if (!comparePasswords(password, user.password)) {
-      this.logger.error("Invalid password entered for user:", email);
+      this.logger.error(`Invalid password entered for user: ${email}`);
       throw new Error("Invalid password");
     }
 
