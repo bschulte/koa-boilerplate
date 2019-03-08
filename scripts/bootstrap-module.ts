@@ -66,7 +66,6 @@ const resolver = `import { Resolver, Query, Arg, Mutation, Authorized, Ctx } fro
 
 import ${name} from "./${fileName}.entity";
 import { ${varName}Service } from "./${fileName}.service";
-import { ADMIN } from "../../security/auth-checker";
 
 @Resolver(${name})
 export class ${name}Resolver {

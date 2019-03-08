@@ -45,6 +45,15 @@ const GRAPHQL_PATH = "/graphql";
     await next();
   });
 
+  // Global exception handler
+  app.use(async (ctx: Context, next: any) => {
+    try {
+      await next();
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
   // Setup JWT authentication for everything
   // Also set the logged in user in async local storage
   app.use(jwt({ secret: APP_KEY, passthrough: true }));

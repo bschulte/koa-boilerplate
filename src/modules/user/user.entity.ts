@@ -13,6 +13,7 @@ import {
 
 import { hashString } from "../../security/authentication";
 import UserAccess from "../userAccess/user-access.entity";
+import UserConfig from "../user-config/user-config.entity";
 
 @Entity()
 @ObjectType({ description: "User model" })
@@ -46,6 +47,12 @@ export default class User {
   public access: UserAccess;
   @Column()
   public accessId: number;
+
+  @OneToOne(() => UserConfig, { cascade: true, eager: true })
+  @JoinColumn()
+  public config: UserConfig;
+  @Column()
+  public configId: number;
 
   @BeforeInsert()
   @BeforeUpdate()

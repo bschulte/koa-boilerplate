@@ -1,7 +1,6 @@
 import { AuthChecker } from "type-graphql";
 import { userService } from "../modules/user/user.service";
-
-export const ADMIN = "ADMIN";
+import { roles as userRoles } from "../common/constants";
 
 export const authChecker: AuthChecker = async (
   { context }: { context: any },
@@ -28,7 +27,7 @@ export const authChecker: AuthChecker = async (
   // Go through each of the approved roles for the resource and
   // see if the user matches one of them
   for (const role of roles) {
-    if (role === ADMIN && user.access.isAdmin) {
+    if (role === userRoles.ADMIN && user.access.isAdmin) {
       return true;
     }
   }

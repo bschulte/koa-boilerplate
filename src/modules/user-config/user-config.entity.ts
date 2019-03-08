@@ -4,23 +4,25 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  PrimaryGeneratedColumn,
-  OneToOne
+  PrimaryGeneratedColumn
 } from "typeorm";
-import User from "../user/user.entity";
 import { roles } from "../../common/constants";
 
 @Entity()
-@ObjectType({ description: "UserAccess model" })
-export default class UserAccess {
+@ObjectType({ description: "UserConfig entity" })
+export default class UserConfig {
   @PrimaryGeneratedColumn()
   @Authorized(roles.ADMIN)
   @Field()
   public readonly id: number;
 
+  @Column({ default: "awesome-value" })
   @Field()
-  @Column({ default: false })
-  public isAdmin: boolean;
+  public configValueOne: string;
+
+  @Column({ default: 3 })
+  @Field()
+  public configValueTwo: number;
 
   @Field()
   @CreateDateColumn()
@@ -29,7 +31,4 @@ export default class UserAccess {
   @Field()
   @UpdateDateColumn()
   public updatedAt: Date;
-
-  @OneToOne(() => User)
-  public user: User;
 }

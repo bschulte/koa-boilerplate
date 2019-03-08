@@ -5,6 +5,8 @@ import UserAccess from "../userAccess/user-access.entity";
 
 import { getRepository, Repository } from "typeorm";
 import { userAccessService } from "../userAccess/user-access.service";
+import UserConfig from "../user-config/user-config.entity";
+import { userConfigService } from "../user-config/user-config.service";
 
 class UserService {
   /**
@@ -19,8 +21,11 @@ class UserService {
     user.email = email;
     user.password = randomPassword;
 
+    // Create default access and config objects for the user during creation
     const access = new UserAccess();
     user.access = access;
+    const config = new UserConfig();
+    user.config = config;
 
     await this.repo().save(user);
 
@@ -55,6 +60,7 @@ class UserService {
     // We have to manually delete one-to-one relationships due
     // to how mysql delete cascades work
     await userAccessService.delete(user.accessId);
+    await userConfigService.delete(user.configId);
   }
 
   public async save(user: User) {
