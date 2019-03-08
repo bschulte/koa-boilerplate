@@ -1,6 +1,7 @@
 import { format, createLogger, transports, info } from "winston";
 import { TransformableInfo } from "logform";
 import moment from "moment";
+import als from "async-local-storage";
 
 export const DEBUG = "debug";
 export const INFO = "info";
@@ -10,9 +11,8 @@ export const ERROR = "error";
 type LogLevel = "debug" | "info" | "warn" | "error";
 
 const myFormat = format.printf((info: TransformableInfo) => {
-  return `${moment(info.timestamp).format("L - LTS")} [${info.level}] ${
-    info.message
-  }`;
+  return `${moment(info.timestamp).format("L LTS")} ${als.get("requestId") ||
+    "-"} ${als.get("user") || "-"} [${info.level}] ${info.message}`;
 });
 
 const logger = createLogger({

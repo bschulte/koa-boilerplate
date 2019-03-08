@@ -3,6 +3,8 @@ import path from "path";
 import { Context } from "koa";
 import jwt from "koa-jwt";
 import serve from "koa-static";
+import als from "async-local-storage";
+import { v4 as uuid } from "uuid";
 import { ApolloServer } from "apollo-server-koa";
 
 import { buildSchemaSync } from "type-graphql";
@@ -26,16 +28,38 @@ const GRAPHQL_PATH = "/graphql";
     dateScalarMode: "timestamp"
   });
 
+  // Create the server with the routing controllers function in
+  // order to feed in all our controllers
   const app = createKoaServer({
     controllers: [__dirname + "/modules/**/*.controller.ts"]
   });
 
+  // Enable the async local storage for the application
+  als.enable();
+
+  // Set the unique identifier for each request
+  app.use(async (ctx: Context, next: any) => {
+    const requestId = ctx.request.headers["x-request-id"] || uuid();
+    als.set("requestId", requestId.replace("-", "").slice(0, 12));
+
+    await next();
+  });
+
   // Setup JWT authentication for everything
+  // Also set the logged in user in async local storage
   app.use(jwt({ secret: APP_KEY, passthrough: true }));
+  app.use(async (ctx: Context, next: any) => {
+    if (ctx.state.user) {
+      als.set("user", ctx.state.user.email);
+    }
+
+    await next();
+  });
 
   // Static files
   app.use(serve(path.join(__dirname, "..", "public")));
 
+  // Apollo server
   const server = new ApolloServer({
     schema,
     context: async ({ ctx }: { ctx: Context & { user: User } }) => {
