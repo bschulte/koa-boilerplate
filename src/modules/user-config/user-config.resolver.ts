@@ -16,10 +16,7 @@ export class UserConfigResolver {
     @Arg("key") key: string,
     @Arg("value") value: string
   ) {
-    this.logger.log(
-      INFO,
-      `Updating user config key: ${key} to value: ${value}`
-    );
+    this.logger.info(`Updating user config key: ${key} to value: ${value}`);
     return await userConfigService.update(userConfigId, key, value);
   }
 }

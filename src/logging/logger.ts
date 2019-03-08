@@ -4,10 +4,10 @@ import moment from "moment";
 import chalk from "chalk";
 import als from "async-local-storage";
 
-export const DEBUG = "debug";
-export const INFO = "info";
-export const WARN = "warn";
-export const ERROR = "error";
+const DEBUG = "debug";
+const INFO = "info";
+const WARN = "warn";
+const ERROR = "error";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -51,16 +51,32 @@ export class Logger {
     this.name = name;
   }
 
-  public log(level: LogLevel, message: string, ...other: any[]) {
+  public debug(message: string, ...other: any[]) {
+    this.log(DEBUG, message, other);
+  }
+
+  public info(message: string, ...other: any[]) {
+    this.log(INFO, message, other);
+  }
+
+  public warn(message: string, ...other: any[]) {
+    this.log(WARN, message, other);
+  }
+
+  public error(message: string, ...other: any[]) {
+    this.log(ERROR, message, other);
+  }
+
+  public sqlLog(message: string) {
+    sqlLogger.log(DEBUG, message);
+  }
+
+  private log(level: LogLevel, message: string, ...other: any[]) {
     logger.log(
       level,
       `[${chalk.magenta(this.name)}] ${message} ${other
         .map((part: any) => JSON.stringify(part))
         .join(", ")}`
     );
-  }
-
-  public sqlLog(message: string) {
-    sqlLogger.log(DEBUG, message);
   }
 }

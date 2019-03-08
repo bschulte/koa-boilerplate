@@ -94,15 +94,13 @@ const GRAPHQL_PATH = "/graphql";
     await bootstrap();
 
     app.listen({ port: PORT }, () => {
-      logger.log(
-        DEBUG,
+      logger.info(
         `App listening on http://localhost:${PORT}${server.graphqlPath}`
       );
     });
   } catch (err) {
-    console.log(err);
-    logger.log(ERROR, "Error starting server:");
-    logger.log(ERROR, err);
+    logger.error("Error starting server:");
+    logger.error(err);
     process.exit(-1);
   }
 })();
