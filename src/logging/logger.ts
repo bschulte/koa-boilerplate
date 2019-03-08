@@ -43,13 +43,23 @@ const sqlLogger = createLogger({
   ]
 });
 
-export const log = (level: LogLevel, message: string, ...other: any[]) => {
-  logger.log(
-    level,
-    `${message} ${other.map((part: any) => JSON.stringify(part)).join(", ")}`
-  );
-};
+export class Logger {
+  private name: string;
 
-export const sqlLog = (message: string) => {
-  sqlLogger.log(DEBUG, message);
-};
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  public log(level: LogLevel, message: string, ...other: any[]) {
+    logger.log(
+      level,
+      `[${this.name}] ${message} ${other
+        .map((part: any) => JSON.stringify(part))
+        .join(", ")}`
+    );
+  }
+
+  public sqlLog(message: string) {
+    sqlLogger.log(DEBUG, message);
+  }
+}

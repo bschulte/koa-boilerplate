@@ -14,7 +14,7 @@ import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
-import { log, WARN, ERROR } from "../../logging/logger";
+import { Logger, WARN, ERROR } from "../../logging/Logger";
 import { roles } from "../../common/constants";
 import { userAccessService } from "../userAccess/user-access.service";
 import { userConfigService } from "../user-config/user-config.service";
@@ -23,6 +23,8 @@ import UserConfig from "../user-config/user-config.entity";
 
 @Resolver(User)
 export class UserResolver {
+  private logger = new Logger(UserResolver.name);
+
   @Query(() => User)
   @Authorized()
   public async user(@Ctx() ctx: any) {
@@ -36,7 +38,11 @@ export class UserResolver {
     const user = await userService.findOneByEmail(newUserData.email);
 
     if (user) {
-      log(WARN, "User already exists with email:", newUserData.email);
+      this.logger.log(
+        WARN,
+        "User already exists with email:",
+        newUserData.email
+      );
       throw new Error("User exists already");
     }
 
@@ -48,13 +54,13 @@ export class UserResolver {
     const user = await userService.findOneByEmail(email);
     // Check if the user exists
     if (!user) {
-      log(ERROR, "Could not find user for email:", email);
+      this.logger.log(ERROR, "Could not find user for email:", email);
       throw new Error("Could not find user");
     }
 
     // Check if the password is correct
     if (!comparePasswords(password, user.password)) {
-      log(ERROR, "Invalid password entered for user:", email);
+      this.logger.log(ERROR, "Invalid password entered for user:", email);
       throw new Error("Invalid password");
     }
 

@@ -12,7 +12,7 @@ import { buildSchemaSync } from "type-graphql";
 
 import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
-import { log, DEBUG, ERROR } from "./logging/logger";
+import { Logger, DEBUG, ERROR } from "./logging/Logger";
 import { bootstrap } from "./bootstrap";
 import { userService } from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";
@@ -23,6 +23,8 @@ const { PORT = 5000, APP_KEY = "super secret" } = process.env;
 const GRAPHQL_PATH = "/graphql";
 
 (async () => {
+  const logger = new Logger("App.ts");
+
   const schema = buildSchemaSync({
     resolvers: [`${__dirname}/**/*.resolver.ts`],
     authChecker,
@@ -93,15 +95,15 @@ const GRAPHQL_PATH = "/graphql";
     await bootstrap();
 
     app.listen({ port: PORT }, () => {
-      log(
+      logger.log(
         DEBUG,
         `App listening on http://localhost:${PORT}${server.graphqlPath}`
       );
     });
   } catch (err) {
     console.log(err);
-    log(ERROR, "Error starting server:");
-    log(ERROR, err);
+    logger.log(ERROR, "Error starting server:");
+    logger.log(ERROR, err);
     process.exit(-1);
   }
 })();

@@ -8,18 +8,20 @@ import {
   PASSWORD_RESET_SNIPPET,
   StatusCode
 } from "../../common/constants";
-import { log, DEBUG, INFO, WARN } from "../../logging/logger";
+import { Logger, DEBUG, INFO, WARN } from "../../logging/Logger";
 import User from "../user/user.entity";
 import { userService } from "../user/user.service";
 import { emailerService } from "../emailer/emailer.service";
 import { randomStr } from "../../common/helpers/util";
 
 class PasswordResetService {
+  private logger = new Logger(PasswordResetService.name);
+
   public async createPasswordResetToken(email: string) {
-    log(INFO, `Password reset requested for email: ${email}`);
+    this.logger.log(INFO, `Password reset requested for email: ${email}`);
     const user = await userService.findOneByEmail(email);
     if (!user) {
-      log(
+      this.logger.log(
         WARN,
         `Password reset requested for email that does not exist: ${email}`
       );
@@ -46,13 +48,16 @@ class PasswordResetService {
     newPasswordDupe: string
   ) {
     const user: User = await userService.findOneByEmail(email);
-    log(INFO, `Attempting to reset password for: ${user.email}`);
+    this.logger.log(INFO, `Attempting to reset password for: ${user.email}`);
     if (!user) {
-      log(WARN, "Invalid token provided for password reset");
+      this.logger.log(WARN, "Invalid token provided for password reset");
       throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
     }
     if (!user.resetToken) {
-      log(WARN, `User does not have password reset token: ${user.email}`);
+      this.logger.log(
+        WARN,
+        `User does not have password reset token: ${user.email}`
+      );
       throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
     }
 
@@ -71,7 +76,10 @@ class PasswordResetService {
     user.resetTokenExpires = null;
     await userService.save(user);
 
-    log(DEBUG, `Reset password successfully for user: ${user.email}`);
+    this.logger.log(
+      DEBUG,
+      `Reset password successfully for user: ${user.email}`
+    );
 
     return true;
   }
@@ -79,7 +87,7 @@ class PasswordResetService {
   private validatePasswordStrength(newPassword: string, user: User) {
     const passTestResult = owasp.test(newPassword);
     if (!passTestResult.strong) {
-      log(
+      this.logger.log(
         WARN,
         `Non-strong password entered for new password, user: ${user.email}`
       );
@@ -96,7 +104,7 @@ class PasswordResetService {
     user: User
   ) {
     if (newPassword !== newPasswordDupe) {
-      log(
+      this.logger.log(
         WARN,
         `Passwords do not match for password reset, user: ${user.email}`
       );
@@ -107,13 +115,16 @@ class PasswordResetService {
   private validateToken(token: string, user: User) {
     const isCorrectToken = bcrypt.compareSync(token, user.resetToken);
     if (!isCorrectToken) {
-      log(WARN, `User entered invalid token for password reset: ${user.email}`);
+      this.logger.log(
+        WARN,
+        `User entered invalid token for password reset: ${user.email}`
+      );
       throw createError(StatusCode.BAD_REQUEST, "Invalid token");
     }
 
     const timeDiff = moment(user.resetTokenExpires).diff(moment(), "second");
     if (timeDiff < 0) {
-      log(WARN, `Token has expired for user: ${user.email}`);
+      this.logger.log(WARN, `Token has expired for user: ${user.email}`);
       throw createError(StatusCode.BAD_REQUEST, "Expired token");
     }
   }

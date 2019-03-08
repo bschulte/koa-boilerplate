@@ -1,7 +1,7 @@
 import * as nodemailer from "nodemailer";
 import * as _ from "lodash";
 
-import { log, DEBUG } from "../../logging/logger";
+import { Logger, DEBUG } from "../../logging/Logger";
 import { SendDto } from "./dtos/send.dto";
 import { MailOptions } from "nodemailer/lib/smtp-pool";
 import { isDevEnv } from "../../common/helpers/util";
@@ -10,6 +10,8 @@ import { passwordResetSnippet } from "./templates/password-reset.snippet";
 import { generalTemplate } from "./templates/general";
 
 class EmailerService {
+  private logger = new Logger(EmailerService.name);
+
   public async send({ subject, snippet, to, cc, bcc, from, params }: SendDto) {
     const transporter = await this.getTransporter();
     const mailOptions: MailOptions = {
@@ -22,10 +24,13 @@ class EmailerService {
     };
 
     const result = await transporter.sendMail(mailOptions);
-    log(DEBUG, `Sent email: ${JSON.stringify(result.messageId)}`);
+    this.logger.log(DEBUG, `Sent email: ${JSON.stringify(result.messageId)}`);
     /* istanbul ignore else */
     if (isDevEnv()) {
-      log(DEBUG, `Preview URL: ${nodemailer.getTestMessageUrl(result)}`);
+      this.logger.log(
+        DEBUG,
+        `Preview URL: ${nodemailer.getTestMessageUrl(result)}`
+      );
     }
 
     return true;
