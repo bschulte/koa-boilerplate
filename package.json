@@ -66,7 +66,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node_modules/.bin/nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec './node_modules/.bin/ts-node' src/app.ts",
-    "start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name dnd-v2",
+    "start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa",
     "cli": "./node_modules/.bin/ts-node scripts/cli.ts || exit 0"
   },
   "author": "Brian Schulte",
