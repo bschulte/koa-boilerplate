@@ -1,6 +1,7 @@
 import { format, createLogger, transports, info } from "winston";
 import { TransformableInfo } from "logform";
 import moment from "moment";
+import chalk from "chalk";
 import als from "async-local-storage";
 
 export const DEBUG = "debug";
@@ -53,7 +54,7 @@ export class Logger {
   public log(level: LogLevel, message: string, ...other: any[]) {
     logger.log(
       level,
-      `[${this.name}] ${message} ${other
+      `[${chalk.magenta(this.name)}] ${message} ${other
         .map((part: any) => JSON.stringify(part))
         .join(", ")}`
     );

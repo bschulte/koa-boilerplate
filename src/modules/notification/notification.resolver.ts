@@ -14,12 +14,16 @@ import { authorizeResource } from "../../security/access-control";
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
 import { StatusCode } from "../../common/constants";
+import { Logger, DEBUG } from "../../logging/Logger";
 
 @Resolver(Notification)
 export class NotificationResolver {
+  private logger = new Logger(NotificationResolver.name);
+
   @Query(() => [Notification])
   @Authorized()
   public async notifications(@Ctx() ctx: any) {
+    this.logger.log(DEBUG, "Getting all notifications");
     return await notificationService.findAll(ctx.user.id);
   }
 

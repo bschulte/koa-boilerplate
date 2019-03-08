@@ -12,7 +12,7 @@ import {
 } from "typeorm";
 
 import { hashString } from "../../security/authentication";
-import UserAccess from "../userAccess/user-access.entity";
+import UserAccess from "../user-access/user-access.entity";
 import UserConfig from "../user-config/user-config.entity";
 
 @Entity()

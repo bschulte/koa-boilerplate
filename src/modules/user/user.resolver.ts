@@ -16,9 +16,9 @@ import { userService } from "./user.service";
 import { comparePasswords } from "../../security/authentication";
 import { Logger, WARN, ERROR } from "../../logging/Logger";
 import { roles } from "../../common/constants";
-import { userAccessService } from "../userAccess/user-access.service";
+import { userAccessService } from "../user-access/user-access.service";
 import { userConfigService } from "../user-config/user-config.service";
-import UserAccess from "../userAccess/user-access.entity";
+import UserAccess from "../user-access/user-access.entity";
 import UserConfig from "../user-config/user-config.entity";
 
 @Resolver(User)
@@ -29,6 +29,12 @@ export class UserResolver {
   @Authorized()
   public async user(@Ctx() ctx: any) {
     return userService.findOneById(ctx.user.id);
+  }
+
+  @Query(() => [User])
+  @Authorized([roles.ADMIN])
+  public async users() {
+    return userService.findAll();
   }
 
   @Mutation(() => String)
