@@ -14,7 +14,7 @@ export default class UserConfig {
   @PrimaryGeneratedColumn()
   @Authorized(roles.ADMIN)
   @Field()
-  public readonly id: number;
+  public id: number;
 
   @Column({ default: "awesome-value" })
   @Field()

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 
 import { authorizeResource } from "./access-control";
-import { user } from "../modules/user/fixtures/user.fixture";
+import { user } from "../testing/fixtures/user.fixture";
 
 describe("access-control", () => {
   it("Throw when trying to authorize a non-existing resource", () => {

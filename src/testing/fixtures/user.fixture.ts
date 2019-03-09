@@ -1,4 +1,4 @@
-import User from "../user.entity";
+import User from "../../modules/user/user.entity";
 
 const _user = new User();
 

@@ -35,7 +35,7 @@ import {
 @ObjectType({ description: "${name} entity" })
 export default class ${name} {
   @PrimaryGeneratedColumn()
-  public readonly id: number;
+  public id: number;
 
   @Field()
   @CreateDateColumn()

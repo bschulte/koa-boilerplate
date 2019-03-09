@@ -13,7 +13,7 @@ import Notification from "./notification.entity";
 @ObjectType({ description: "Notification entity" })
 export default class NotificationContent {
   @PrimaryGeneratedColumn()
-  public readonly id: number;
+  public id: number;
 
   @Field()
   @Column()

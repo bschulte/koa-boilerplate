@@ -15,7 +15,7 @@ import NotificationContent from "./notification-content.entity";
 @ObjectType({ description: "Notification entity" })
 export default class Notification {
   @PrimaryGeneratedColumn()
-  public readonly id: number;
+  public id: number;
 
   @Column()
   public userId: number;

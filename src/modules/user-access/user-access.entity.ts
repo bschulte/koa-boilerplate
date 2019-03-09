@@ -16,7 +16,7 @@ export default class UserAccess {
   @PrimaryGeneratedColumn()
   @Authorized(roles.ADMIN)
   @Field()
-  public readonly id: number;
+  public id: number;
 
   @Field()
   @Column({ default: false })
