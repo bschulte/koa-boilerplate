@@ -62,8 +62,8 @@ export const remove = async (userId: number) => {
 
   // We have to manually delete one-to-one relationships due
   // to how mysql delete cascades work
-  await userAccessService.delete(user.accessId);
-  await userConfigService.delete(user.configId);
+  await userAccessService.remove(user.accessId);
+  await userConfigService.remove(user.configId);
 };
 
 export const save = async (user: User) => {

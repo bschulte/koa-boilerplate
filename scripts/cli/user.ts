@@ -56,5 +56,5 @@ export const cliDeleteUser = async (argv: any) => {
     process.exit(0);
   }
 
-  await userService.delete(user.id);
+  await userService.remove(user.id);
 };
