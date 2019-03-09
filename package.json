@@ -12,8 +12,10 @@
     "pm2:start": "pm2 start --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa",
     "cli": "./node_modules/.bin/ts-node scripts/cli.ts || exit 0",
     "docker:build": "docker build -t koa .",
-    "docker:run": "docker run -p 5111:5111 koa",
-    "docker:pm2": "pm2-runtime --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa"
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:pm2": "pm2-runtime --interpreter ./node_modules/.bin/ts-node ./src/app.ts --name koa",
+    "docker:shell": "docker exec -it $(docker ps -q) /bin/ash"
   },
   "dependencies": {
     "@types/bcrypt": "^3.0.0",

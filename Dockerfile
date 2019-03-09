@@ -1,17 +1,20 @@
 FROM node:alpine
-# FROM mhart/alpine-node:10
+
+
+RUN npm i -g pm2
 
 RUN mkdir /app
-COPY . /app
 
 WORKDIR /app
 
+COPY package*.json ./
 # Based on: https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md#node-gyp-alpine
-RUN apk add --no-cache --virtual .gyp python make g++ \
+RUN apk add --virtual .gyp python make g++ \
   && npm install \
   && apk del .gyp
+COPY . .
 
-RUN npm i -g pm2
+EXPOSE 5111
 
 RUN node -v
 
