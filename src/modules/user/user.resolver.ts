@@ -12,7 +12,7 @@ import jwt from "jsonwebtoken";
 
 import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
-import { userService } from "./user.service";
+import * as userService from "./user.service";
 import { comparePasswords } from "../../security/authentication";
 import { Logger } from "../../logging/Logger";
 import { roles } from "../../common/constants";

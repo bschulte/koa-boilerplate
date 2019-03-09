@@ -10,7 +10,7 @@ import {
 } from "../../common/constants";
 import { Logger } from "../../logging/Logger";
 import User from "../user/user.entity";
-import { userService } from "../user/user.service";
+import * userService from "../user/user.service";
 import { emailerService } from "../emailer/emailer.service";
 import { randomStr } from "../../common/helpers/util";
 

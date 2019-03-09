@@ -1,5 +1,5 @@
 import { AuthChecker } from "type-graphql";
-import { userService } from "../modules/user/user.service";
+import * as userService from "../modules/user/user.service";
 import { roles as userRoles } from "../common/constants";
 
 export const authChecker: AuthChecker = async (

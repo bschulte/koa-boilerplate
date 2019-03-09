@@ -14,7 +14,7 @@ import { buildSchemaSync } from "type-graphql";
 import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
 import { Logger } from "./logging/Logger";
-import { userService } from "./modules/user/user.service";
+import * as userService from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";
 import { passwordResetRouter } from "./modules/passwordReset/password-reset.controller";
 

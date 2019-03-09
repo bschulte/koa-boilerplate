@@ -2,7 +2,7 @@ import chalk from "chalk";
 import prompts from "prompts";
 
 import { getOptionValue } from "../cli";
-import { userService } from "../../src/modules/user/user.service";
+import * as userService from "../../src/modules/user/user.service";
 import User from "../../src/modules/user/user.entity";
 
 export const cliCreateUser = async (argv: any) => {
