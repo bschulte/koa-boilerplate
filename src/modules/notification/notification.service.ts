@@ -3,26 +3,22 @@ import { getRepository, Repository } from "typeorm";
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
 
-class NotificationService {
-  public async findAll(userId: number) {
-    return await this.repo().find({ userId });
-  }
+export const findAll = async (userId: number) => {
+  return await _repo().find({ userId });
+};
 
-  public async findOneByUuid(uuid: string): Promise<Notification> {
-    return await this.repo().findOne({ uuid });
-  }
+export const findOneByUuid = async (uuid: string) => {
+  return await _repo().findOne({ uuid });
+};
 
-  public async findContentById(id: number): Promise<NotificationContent> {
-    return await this.contentRepo().findOne(id);
-  }
+export const findContentById = async (id: number) => {
+  return await _contentRepo().findOne(id);
+};
 
-  private repo(): Repository<Notification> {
-    return getRepository(Notification);
-  }
+const _repo = (): Repository<Notification> => {
+  return getRepository(Notification);
+};
 
-  private contentRepo(): Repository<NotificationContent> {
-    return getRepository(NotificationContent);
-  }
-}
-
-export const notificationService = new NotificationService();
+const _contentRepo = (): Repository<NotificationContent> => {
+  return getRepository(NotificationContent);
+};

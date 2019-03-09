@@ -1,7 +1,7 @@
 import { Resolver, Authorized, Mutation, Arg } from "type-graphql";
 
 import UserAccess from "./user-access.entity";
-import { userAccessService } from "./user-access.service";
+import * as userAccessService from "./user-access.service";
 import { roles } from "../../common/constants";
 
 @Resolver(UserAccess)

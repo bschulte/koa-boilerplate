@@ -12,7 +12,7 @@
     "noImplicitThis": true,
     "alwaysStrict": true,
     "typeRoots": [],
-    "types": ["node"],
+    "types": ["node", "koa-bodyparser"],
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

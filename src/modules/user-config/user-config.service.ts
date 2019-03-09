@@ -3,44 +3,40 @@ import { getRepository, Repository } from "typeorm";
 import createError from "http-errors";
 import { StatusCode } from "../../common/constants";
 
-class UserConfigService {
-  public async findOneById(userConfigId: number): Promise<UserConfig> {
-    return await this.repo().findOne(userConfigId);
+export const findOneById = async (userConfigId: number) => {
+  return await _repo().findOne(userConfigId);
+};
+
+export const update = async (userConfigId: number, key: string, value: any) => {
+  const userConfig = await findOneById(userConfigId);
+  if (!userConfig) {
+    throw createError(
+      StatusCode.BAD_REQUEST,
+      "Could not find user config entry"
+    );
   }
 
-  public async update(userConfigId: number, key: string, value: any) {
-    const userConfig = await this.findOneById(userConfigId);
-    if (!userConfig) {
-      throw createError(
-        StatusCode.BAD_REQUEST,
-        "Could not find user config entry"
-      );
-    }
-
-    if (!(key in userConfig)) {
-      throw createError(
-        StatusCode.BAD_REQUEST,
-        `Invalid user config key: ${key}`
-      );
-    }
-
-    userConfig[key] = value;
-    await this.save(userConfig);
-
-    return userConfig;
+  if (!(key in userConfig)) {
+    throw createError(
+      StatusCode.BAD_REQUEST,
+      `Invalid user config key: ${key}`
+    );
   }
 
-  public async delete(userConfigId: number) {
-    await this.repo().delete(userConfigId);
-  }
+  userConfig[key] = value;
+  await save(userConfig);
 
-  public async save(userConfig: UserConfig) {
-    await this.repo().save(userConfig);
-  }
+  return userConfig;
+};
 
-  private repo(): Repository<UserConfig> {
-    return getRepository(UserConfig);
-  }
-}
+export const remove = async (userConfigId: number) => {
+  await _repo().delete(userConfigId);
+};
 
-export const userConfigService = new UserConfigService();
+export const save = async (userConfig: UserConfig) => {
+  await _repo().save(userConfig);
+};
+
+const _repo = (): Repository<UserConfig> => {
+  return getRepository(UserConfig);
+};

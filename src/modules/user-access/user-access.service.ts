@@ -3,44 +3,44 @@ import { getRepository, Repository } from "typeorm";
 import createError from "http-errors";
 import { StatusCode } from "../../common/constants";
 
-class UserAccessService {
-  public async findOneById(userAccessId: number): Promise<UserAccess> {
-    return await this.repo().findOne(userAccessId);
+export const findOneById = async (userAccessId: number) => {
+  return await _repo().findOne(userAccessId);
+};
+
+export const remove = async (userAccessId: number) => {
+  return await _repo().delete(userAccessId);
+};
+
+export const update = async (
+  userAccessId: number,
+  key: string,
+  value: boolean
+) => {
+  const userAccess = await findOneById(userAccessId);
+  if (!userAccess) {
+    throw createError(
+      StatusCode.BAD_REQUEST,
+      "Could not find user access entry"
+    );
   }
 
-  public async delete(userAccessId: number) {
-    return await this.repo().delete(userAccessId);
+  if (!(key in userAccess)) {
+    throw createError(
+      StatusCode.BAD_REQUEST,
+      `Invalid user access key: ${key}`
+    );
   }
 
-  public async update(userAccessId: number, key: string, value: boolean) {
-    const userAccess = await this.findOneById(userAccessId);
-    if (!userAccess) {
-      throw createError(
-        StatusCode.BAD_REQUEST,
-        "Could not find user access entry"
-      );
-    }
+  userAccess[key] = value;
+  await save(userAccess);
 
-    if (!(key in userAccess)) {
-      throw createError(
-        StatusCode.BAD_REQUEST,
-        `Invalid user access key: ${key}`
-      );
-    }
+  return userAccess;
+};
 
-    userAccess[key] = value;
-    await this.save(userAccess);
+export const save = async (userAccess: UserAccess) => {
+  return await _repo().save(userAccess);
+};
 
-    return userAccess;
-  }
-
-  public async save(userAccess: UserAccess) {
-    return await this.repo().save(userAccess);
-  }
-
-  private repo(): Repository<UserAccess> {
-    return getRepository(UserAccess);
-  }
-}
-
-export const userAccessService = new UserAccessService();
+const _repo = (): Repository<UserAccess> => {
+  return getRepository(UserAccess);
+};

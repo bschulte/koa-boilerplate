@@ -1,6 +1,4 @@
-import { CreateResetDto } from "./dtos/createReset.dto";
-import { passwordResetService } from "./password-reset.service";
-import { ResetDto } from "./dtos/reset.dto";
+import * as passwordResetService from "./password-reset.service";
 import Router from "koa-router";
 import { Context } from "koa";
 

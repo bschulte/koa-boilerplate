@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 import createError from "http-errors";
 
-import { notificationService } from "./notification.service";
+import * as notificationService from "./notification.service";
 import { authorizeResource } from "../../security/access-control";
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";

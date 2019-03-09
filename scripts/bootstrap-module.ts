@@ -49,23 +49,19 @@ export default class ${name} {
 const service = `import ${name} from "./${fileName}.entity";
 import { getRepository, Repository } from "typeorm";
 
-class ${name}Service {
-  public async findOneById(${varName}Id: number): Promise<${name}> {
-    return await this.repo().findOne(${varName}Id);
-  }
-
-  private repo(): Repository<${name}> {
-    return getRepository(${name});
-  }
+const findOneById = async (${varName}Id: number) => {
+  return await _repo().findOne(${varName}Id);
 }
 
-export const ${varName}Service = new ${name}Service();
+const _repo(): Repository<${name}> {
+  return getRepository(${name});
+}
 `;
 
 const resolver = `import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 
 import ${name} from "./${fileName}.entity";
-import { ${varName}Service } from "./${fileName}.service";
+import * as ${varName}Service from "./${fileName}.service";
 
 @Resolver(${name})
 export class ${name}Resolver {

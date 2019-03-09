@@ -10,128 +10,122 @@ import {
 } from "../../common/constants";
 import { Logger } from "../../logging/Logger";
 import User from "../user/user.entity";
-import * userService from "../user/user.service";
-import { emailerService } from "../emailer/emailer.service";
+import * as userService from "../user/user.service";
+import * as emailerService from "../emailer/emailer.service";
 import { randomStr } from "../../common/helpers/util";
 
-class PasswordResetService {
-  private logger = new Logger(PasswordResetService.name);
+const _logger = new Logger("PasswordResetService");
 
-  public async createPasswordResetToken(email: string) {
-    this.logger.info(`Password reset requested for email: ${email}`);
-    const user = await userService.findOneByEmail(email);
-    if (!user) {
-      this.logger.warn(
-        `Password reset requested for email that does not exist: ${email}`
-      );
-      return;
-    }
-
-    const token = randomStr(36);
-
-    user.resetToken = bcrypt.hashSync(token, 10);
-    user.resetTokenExpires = moment()
-      .add(2, "hour")
-      .toDate();
-    await userService.save(user);
-
-    await this.sendPasswordResetEmail(user, token);
-
-    return true;
+export const createPasswordResetToken = async (email: string) => {
+  _logger.info(`Password reset requested for email: ${email}`);
+  const user = await userService.findOneByEmail(email);
+  if (!user) {
+    _logger.warn(
+      `Password reset requested for email that does not exist: ${email}`
+    );
+    return;
   }
 
-  public async resetPassword(
-    email: string,
-    token: string,
-    newPassword: string,
-    newPasswordDupe: string
-  ) {
-    const user: User = await userService.findOneByEmail(email);
-    this.logger.info(`Attempting to reset password for: ${user.email}`);
-    if (!user) {
-      this.logger.warn("Invalid token provided for password reset");
-      throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
-    }
-    if (!user.resetToken) {
-      this.logger.warn(
-        `User does not have password reset token: ${user.email}`
-      );
-      throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
-    }
+  const token = randomStr(36);
 
-    // Check if the token has expired
-    this.validateToken(token, user);
+  user.resetToken = bcrypt.hashSync(token, 10);
+  user.resetTokenExpires = moment()
+    .add(2, "hour")
+    .toDate();
+  await userService.save(user);
 
-    // Check if the new password and its repeated value are the same
-    this.validateSamePassword(newPassword, newPasswordDupe, user);
+  await _sendPasswordResetEmail(user, token);
 
-    // Check new password strength
-    this.validatePasswordStrength(newPassword, user);
+  return true;
+};
 
-    // Update the password
-    user.password = bcrypt.hashSync(newPassword, 10);
-    user.resetToken = null;
-    user.resetTokenExpires = null;
-    await userService.save(user);
-
-    this.logger.debug(`Reset password successfully for user: ${user.email}`);
-
-    return true;
+export const resetPassword = async (
+  email: string,
+  token: string,
+  newPassword: string,
+  newPasswordDupe: string
+) => {
+  const user: User = await userService.findOneByEmail(email);
+  _logger.info(`Attempting to reset password for: ${user.email}`);
+  if (!user) {
+    _logger.warn("Invalid token provided for password reset");
+    throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
+  }
+  if (!user.resetToken) {
+    _logger.warn(`User does not have password reset token: ${user.email}`);
+    throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
   }
 
-  private validatePasswordStrength(newPassword: string, user: User) {
-    const passTestResult = owasp.test(newPassword);
-    if (!passTestResult.strong) {
-      this.logger.warn(
-        `Non-strong password entered for new password, user: ${user.email}`
-      );
-      throw createError(
-        StatusCode.BAD_REQUEST,
-        `Invalid new password, errors: ${passTestResult.errors.join(" ")}`
-      );
-    }
+  // Check if the token has expired
+  _validateToken(token, user);
+
+  // Check if the new password and its repeated value are the same
+  _validateSamePassword(newPassword, newPasswordDupe, user);
+
+  // Check new password strength
+  _validatePasswordStrength(newPassword, user);
+
+  // Update the password
+  user.password = bcrypt.hashSync(newPassword, 10);
+  user.resetToken = null;
+  user.resetTokenExpires = null;
+  await userService.save(user);
+
+  _logger.debug(`Reset password successfully for user: ${user.email}`);
+
+  return true;
+};
+
+const _validatePasswordStrength = async (newPassword: string, user: User) => {
+  const passTestResult = owasp.test(newPassword);
+  if (!passTestResult.strong) {
+    _logger.warn(
+      `Non-strong password entered for new password, user: ${user.email}`
+    );
+    throw createError(
+      StatusCode.BAD_REQUEST,
+      `Invalid new password, errors: ${passTestResult.errors.join(" ")}`
+    );
+  }
+};
+
+const _validateSamePassword = (
+  newPassword: string,
+  newPasswordDupe: string,
+  user: User
+) => {
+  if (newPassword !== newPasswordDupe) {
+    _logger.warn(
+      `Passwords do not match for password reset, user: ${user.email}`
+    );
+    throw createError(StatusCode.BAD_REQUEST, "Passwords do not match");
+  }
+};
+
+const _validateToken = async (token: string, user: User) => {
+  const isCorrectToken = bcrypt.compareSync(token, user.resetToken);
+  if (!isCorrectToken) {
+    _logger.warn(
+      `User entered invalid token for password reset: ${user.email}`
+    );
+    throw createError(StatusCode.BAD_REQUEST, "Invalid token");
   }
 
-  private validateSamePassword(
-    newPassword: string,
-    newPasswordDupe: string,
-    user: User
-  ) {
-    if (newPassword !== newPasswordDupe) {
-      this.logger.warn(
-        `Passwords do not match for password reset, user: ${user.email}`
-      );
-      throw createError(StatusCode.BAD_REQUEST, "Passwords do not match");
-    }
+  const timeDiff = moment(user.resetTokenExpires).diff(moment(), "second");
+  if (timeDiff < 0) {
+    _logger.warn(`Token has expired for user: ${user.email}`);
+    throw createError(StatusCode.BAD_REQUEST, "Expired token");
   }
+};
 
-  private validateToken(token: string, user: User) {
-    const isCorrectToken = bcrypt.compareSync(token, user.resetToken);
-    if (!isCorrectToken) {
-      this.logger.warn(
-        `User entered invalid token for password reset: ${user.email}`
-      );
-      throw createError(StatusCode.BAD_REQUEST, "Invalid token");
+const _sendPasswordResetEmail = async (user: User, generatedToken: string) => {
+  await emailerService.send({
+    subject: "[Kryptowire EMM] Password Reset",
+    to: [user.email],
+    from: EMAIL_FROM,
+    snippet: PASSWORD_RESET_SNIPPET,
+    params: {
+      token: generatedToken
     }
-
-    const timeDiff = moment(user.resetTokenExpires).diff(moment(), "second");
-    if (timeDiff < 0) {
-      this.logger.warn(`Token has expired for user: ${user.email}`);
-      throw createError(StatusCode.BAD_REQUEST, "Expired token");
-    }
-  }
-
-  private async sendPasswordResetEmail(user: User, generatedToken: string) {
-    await emailerService.send({
-      subject: "[Kryptowire EMM] Password Reset",
-      to: [user.email],
-      from: EMAIL_FROM,
-      snippet: PASSWORD_RESET_SNIPPET,
-      params: {
-        token: generatedToken
-      }
-    });
-  }
-}
-
-export const passwordResetService = new PasswordResetService();
+  });
+};

@@ -4,9 +4,9 @@ import { hashString } from "../../security/authentication";
 import UserAccess from "../user-access/user-access.entity";
 
 import { getRepository, Repository } from "typeorm";
-import { userAccessService } from "../user-access/user-access.service";
+import * as userAccessService from "../user-access/user-access.service";
 import UserConfig from "../user-config/user-config.entity";
-import { userConfigService } from "../user-config/user-config.service";
+import * as userConfigService from "../user-config/user-config.service";
 
 const _repo = (): Repository<User> => {
   return getRepository(User);

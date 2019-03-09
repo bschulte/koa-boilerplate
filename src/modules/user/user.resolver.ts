@@ -16,8 +16,8 @@ import * as userService from "./user.service";
 import { comparePasswords } from "../../security/authentication";
 import { Logger } from "../../logging/Logger";
 import { roles } from "../../common/constants";
-import { userAccessService } from "../user-access/user-access.service";
-import { userConfigService } from "../user-config/user-config.service";
+import * as userAccessService from "../user-access/user-access.service";
+import * as userConfigService from "../user-config/user-config.service";
 import UserAccess from "../user-access/user-access.entity";
 import UserConfig from "../user-config/user-config.entity";
 
