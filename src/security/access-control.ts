@@ -1,4 +1,9 @@
 import User from "../modules/user/user.entity";
+import createError from "http-errors";
+import { StatusCode } from "../common/constants";
+import { Logger } from "../logging/Logger";
+
+const logger = new Logger("AccessControl");
 
 // This will verify if the authenticated user has access to
 // the given resource. This can be that the user directly
@@ -23,6 +28,8 @@ export const authorizeResource = (resource: any, user: User) => {
   }
 
   if (user.id !== resource.userId) {
-    throw new Error("Unauthorized access");
+    throw createError(StatusCode.UNAUTHORIZED, "Unauthorized access");
   }
+
+  return true;
 };

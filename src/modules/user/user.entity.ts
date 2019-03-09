@@ -19,7 +19,7 @@ import UserConfig from "../user-config/user-config.entity";
 @ObjectType({ description: "User model" })
 export default class User {
   @PrimaryGeneratedColumn()
-  public readonly id: number;
+  public id: number;
 
   @Field()
   @Column()
@@ -44,15 +44,15 @@ export default class User {
 
   @OneToOne(() => UserAccess, { cascade: true, eager: true })
   @JoinColumn()
-  public access: UserAccess;
+  public access?: UserAccess;
   @Column()
-  public accessId: number;
+  public accessId?: number;
 
   @OneToOne(() => UserConfig, { cascade: true, eager: true })
   @JoinColumn()
-  public config: UserConfig;
+  public config?: UserConfig;
   @Column()
-  public configId: number;
+  public configId?: number;
 
   @BeforeInsert()
   @BeforeUpdate()
