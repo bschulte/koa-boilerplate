@@ -14,6 +14,7 @@ export const update = async (userConfigId: number, key: string, value: any) => {
       StatusCode.BAD_REQUEST,
       "Could not find user config entry"
     );
+    return;
   }
 
   if (!(key in userConfig)) {
@@ -21,6 +22,7 @@ export const update = async (userConfigId: number, key: string, value: any) => {
       StatusCode.BAD_REQUEST,
       `Invalid user config key: ${key}`
     );
+    return;
   }
 
   userConfig[key] = value;
@@ -34,7 +36,7 @@ export const remove = async (userConfigId: number) => {
 };
 
 export const save = async (userConfig: UserConfig) => {
-  await _repo().save(userConfig);
+  return await _repo().save(userConfig);
 };
 
 const _repo = (): Repository<UserConfig> => {
