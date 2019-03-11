@@ -1,31 +1,30 @@
-import sinon from "sinon";
-import { expect } from "chai";
-
-import { mockModule } from "../../testing/utils/mockModule";
 import * as userAccessService from "./user-access.service";
 import { userAccess } from "../../testing/fixtures/user-access.fixture";
 
 describe("user-access", () => {
-  let sandbox: sinon.SinonSandbox;
-  const mockUserService = mockModule(userAccessService, {
-    findOneById: async () => userAccess
-  });
-
-  beforeEach(() => {
-    sandbox = sinon.createSandbox();
-  });
-
-  afterEach(() => {
-    sandbox.restore();
-  });
-
   describe("update", () => {
     it("should throw an error when the user access entry could not be found", async () => {
-      mockUserService(sandbox, {
-        findOneById: () => null
-      });
+      jest
+        .spyOn(userAccessService, "findOneById")
+        .mockImplementation(() => null);
 
-      expect(() => userAccessService.update(1, "key", false)).to.throw();
+      try {
+        await userAccessService.update(1, "key", false);
+      } catch (err) {
+        expect(err.message).toBe("Could not find user access entry");
+      }
+    });
+
+    it("should throw an error when the user access key attempting to be updated is not valid", async () => {
+      jest
+        .spyOn(userAccessService, "findOneById")
+        .mockImplementation(async () => userAccess);
+
+      try {
+        await userAccessService.update(1, "badValue", false);
+      } catch (err) {
+        expect(err.message).toBe("Invalid user access key: badValue");
+      }
     });
   });
 });
