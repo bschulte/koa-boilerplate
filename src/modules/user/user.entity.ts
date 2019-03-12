@@ -56,7 +56,7 @@ export default class User {
 
   @BeforeInsert()
   @BeforeUpdate()
-  private hashPassword() {
+  private hashPassword?() {
     this.password = hashString(this.password);
   }
 }

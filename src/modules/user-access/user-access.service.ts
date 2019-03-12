@@ -22,7 +22,6 @@ export const update = async (
       StatusCode.BAD_REQUEST,
       "Could not find user access entry"
     );
-    return;
   }
 
   if (!(key in userAccess)) {
@@ -30,7 +29,6 @@ export const update = async (
       StatusCode.BAD_REQUEST,
       `Invalid user access key: ${key}`
     );
-    return;
   }
 
   userAccess[key] = value;

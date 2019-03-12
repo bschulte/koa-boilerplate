@@ -7,7 +7,7 @@ _user.email = "test@test.com";
 _user.password = "1234567";
 _user.createdAt = new Date();
 _user.updatedAt = new Date();
-_user.resetToken = null;
+_user.resetToken = "testToken";
 _user.resetTokenExpires = null;
 _user.access = {
   id: 1,
