@@ -17,13 +17,14 @@ const _logger = new Logger("Bootstrap");
 const _createMockData = async () => {
   const access = new UserAccess();
   const config = new UserConfig();
+  const user = new User();
 
-  await getRepository(User).insert({
-    email: "test@test.com",
-    password: "password",
-    access,
-    config
-  });
+  user.email = "test@test.com";
+  user.password = "password";
+  user.access = access;
+  user.config = config;
+
+  await getRepository(User).save(user);
 };
 
 // Function to handle the setting up of anything that's needed
