@@ -1,4 +1,4 @@
-import { ObjectType, Field } from "type-graphql";
+import { ObjectType, Field, Authorized } from "type-graphql";
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -14,11 +14,14 @@ import {
 import { hashString } from "../../security/authentication";
 import UserAccess from "../user-access/user-access.entity";
 import UserConfig from "../user-config/user-config.entity";
+import { roles } from "../../common/constants";
 
 @Entity()
 @ObjectType({ description: "User model" })
 export default class User {
   @PrimaryGeneratedColumn()
+  @Authorized([roles.ADMIN])
+  @Field()
   public id: number;
 
   @Field()

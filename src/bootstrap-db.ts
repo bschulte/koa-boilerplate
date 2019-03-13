@@ -16,6 +16,7 @@ const _logger = new Logger("Bootstrap");
 
 const _createMockData = async () => {
   const access = new UserAccess();
+  access.isAdmin = true;
   const config = new UserConfig();
   const user = new User();
 
