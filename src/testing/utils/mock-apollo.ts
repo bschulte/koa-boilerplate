@@ -2,10 +2,9 @@ import { ApolloServer } from "apollo-server-koa";
 import { buildSchemaSync } from "type-graphql";
 import { createTestClient } from "apollo-server-testing";
 
-import { authChecker } from "../../security/auth-checker";
 import { Context } from "mocha";
 import User from "../../modules/user/user.entity";
-import * as userService from "../../modules/user/user.service";
+import { authChecker } from "../../security/auth-checker";
 
 export default async () => {
   const schema = buildSchemaSync({
@@ -16,13 +15,10 @@ export default async () => {
 
   const server = new ApolloServer({
     schema,
-    context: async ({ ctx }: { ctx: Context & { user: User } }) => {
-      if (ctx.state.user) {
-        const user = await userService.findOneById(ctx.state.user.id);
-        return { ctx, user };
-      }
-      return { ctx, user: null };
-    }
+    context: async ({ ctx }: { ctx: Context & { user: User } }) => ({
+      ctx,
+      user: { id: 1, email: "test@test.com" }
+    })
   });
 
   return await createTestClient(server);
