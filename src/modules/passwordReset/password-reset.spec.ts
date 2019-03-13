@@ -83,7 +83,6 @@ describe("password-reset", () => {
           "test-new-passA1234"
         );
       } catch (err) {
-        console.log("Error caught:", err);
         expect(err.message).toBe("Expired token");
       }
     });

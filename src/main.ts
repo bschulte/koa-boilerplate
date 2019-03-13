@@ -1,5 +1,5 @@
 import app from "./app";
-import { bootstrap } from "./bootstrap";
+import { bootstrap } from "./bootstrap-db";
 import { Logger } from "./logging/Logger";
 
 (async () => {
