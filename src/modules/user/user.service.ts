@@ -30,7 +30,7 @@ export const create = async (email: string) => {
   const config = new UserConfig();
   user.config = config;
 
-  await _repo().save(user);
+  await save(user);
 
   return randomPassword;
 };

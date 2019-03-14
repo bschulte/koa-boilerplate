@@ -33,3 +33,33 @@ export const GET_USERS = gql`
     }
   }
 `;
+
+export const GET_NOTIFICATIONS = gql`
+  {
+    notifications {
+      status
+      uuid
+      createdAt
+      updatedAt
+      content {
+        title
+        html
+      }
+    }
+  }
+`;
+
+export const GET_NOTIFICATION = gql`
+  query notification($uuid: String!) {
+    notification(uuid: $uuid) {
+      status
+      uuid
+      createdAt
+      updatedAt
+      content {
+        title
+        html
+      }
+    }
+  }
+`;

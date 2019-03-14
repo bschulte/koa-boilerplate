@@ -5,8 +5,8 @@
   "repository": "https://github.com/bschulte/koa-boilerplate",
   "main": "src/main.ts",
   "scripts": {
-    "test": "./node_modules/.bin/jest",
-    "test:watch": "./node_modules/.bin/jest --watch",
+    "test": "./node_modules/.bin/jest --runInBand",
+    "test:watch": "./node_modules/.bin/jest --watch --runInBand",
     "dev": "nodemon",
     "dev:debug": "nodemon --config nodemon-debug.json",
     "start": "./node_modules/.bin/ts-node ./src/app.ts",

@@ -23,7 +23,7 @@ export class NotificationResolver {
   @Query(() => [Notification])
   @Authorized()
   public async notifications(@Ctx() ctx: any) {
-    this.logger.debug("Getting all notifications");
+    this.logger.debug(`Getting all notifications for user: ${ctx.user.id}`);
     return await notificationService.findAll(ctx.user.id);
   }
 

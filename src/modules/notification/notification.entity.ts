@@ -21,7 +21,7 @@ export default class Notification {
   public userId: number;
 
   @Field()
-  @Column()
+  @Column({ default: "unread" })
   public status: "read" | "unread" | "deleted";
 
   @Field()
