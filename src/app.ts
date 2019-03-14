@@ -1,4 +1,6 @@
 import "reflect-metadata";
+import dotenv from "dotenv";
+dotenv.config();
 import path from "path";
 import Koa, { Context } from "koa";
 import bodyParser from "koa-bodyparser";
@@ -18,11 +20,11 @@ import * as userService from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";
 import { passwordResetRouter } from "./modules/passwordReset/password-reset.controller";
 
-const { APP_KEY = "super secret" } = process.env;
+const { APP_KEY = "super secret", PORT = 5555 } = process.env;
 
 const GRAPHQL_PATH = "/graphql";
 
-const logger = new Logger("App.ts");
+const _logger = new Logger("App.ts");
 
 const schema = buildSchemaSync({
   resolvers: [`${__dirname}/**/*.resolver.ts`],
@@ -73,7 +75,7 @@ app.use(async (ctx: Context, next: any) => {
 app.use(serve(path.join(__dirname, "..", "public")));
 
 // Morgan logger for requests
-app.use(morgan("short", { stream: logger }));
+app.use(morgan("short", { stream: _logger }));
 
 // Apollo server
 const server = new ApolloServer({
@@ -94,4 +96,5 @@ server.applyMiddleware({ app, path: GRAPHQL_PATH });
 // Standard REST routes
 app.use(passwordResetRouter.routes());
 
+// export default app.listen({ port: PORT });
 export default app;

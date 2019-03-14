@@ -34,7 +34,7 @@ export const remove = async (userConfigId: number) => {
 };
 
 export const save = async (userConfig: UserConfig) => {
-  await _repo().save(userConfig);
+  return await _repo().save(userConfig);
 };
 
 const _repo = (): Repository<UserConfig> => {

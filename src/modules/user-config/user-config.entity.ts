@@ -12,7 +12,7 @@ import { roles } from "../../common/constants";
 @ObjectType({ description: "UserConfig entity" })
 export default class UserConfig {
   @PrimaryGeneratedColumn()
-  @Authorized(roles.ADMIN)
+  @Authorized([roles.ADMIN])
   @Field()
   public id: number;
 

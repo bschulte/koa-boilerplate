@@ -76,7 +76,7 @@ export const resetPassword = async (
   return true;
 };
 
-const _validatePasswordStrength = async (newPassword: string, user: User) => {
+const _validatePasswordStrength = (newPassword: string, user: User) => {
   const passTestResult = owasp.test(newPassword);
   if (!passTestResult.strong) {
     _logger.warn(
@@ -102,7 +102,7 @@ const _validateSamePassword = (
   }
 };
 
-const _validateToken = async (token: string, user: User) => {
+const _validateToken = (token: string, user: User) => {
   const isCorrectToken = bcrypt.compareSync(token, user.resetToken);
   if (!isCorrectToken) {
     _logger.warn(

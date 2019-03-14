@@ -32,32 +32,7 @@ export class Logger {
 
   private logger = createLogger({
     level: "silly",
-    transports: [
-      new transports.File({
-        filename: `${__dirname}/../../logs/server.log`,
-        maxFiles: 20,
-        maxsize: 1024 * 1000 * 5, // 5MB
-        format: format.combine(format.timestamp(), this.myUncoloredFormat)
-      }),
-      new transports.File({
-        filename: `${__dirname}/../../logs/server.tail.log`,
-        maxFiles: 1,
-        maxsize: 1024 * 1000 * 5, // 5MB
-        tailable: true,
-        format: format.combine(
-          format.timestamp(),
-          format.colorize(),
-          this.myFormat
-        )
-      }),
-      new transports.Console({
-        format: format.combine(
-          format.timestamp(),
-          format.colorize(),
-          this.myFormat
-        )
-      })
-    ]
+    transports: this.createTransports()
   });
 
   private sqlLogger = createLogger({
@@ -110,5 +85,41 @@ export class Logger {
 
   private getTimeDiff() {
     return new Date().getTime() - Logger.lastMessageTimestamp;
+  }
+
+  private createTransports() {
+    const transportList: any[] = [
+      new transports.File({
+        filename: `${__dirname}/../../logs/server.log`,
+        maxFiles: 20,
+        maxsize: 1024 * 1000 * 5, // 5MB
+        format: format.combine(format.timestamp(), this.myUncoloredFormat)
+      }),
+      new transports.File({
+        filename: `${__dirname}/../../logs/server.tail.log`,
+        maxFiles: 1,
+        maxsize: 1024 * 1000 * 5, // 5MB
+        tailable: true,
+        format: format.combine(
+          format.timestamp(),
+          format.colorize(),
+          this.myFormat
+        )
+      })
+    ];
+
+    if (process.env.NODE_ENV !== "test") {
+      transportList.push(
+        new transports.Console({
+          format: format.combine(
+            format.timestamp(),
+            format.colorize(),
+            this.myFormat
+          )
+        })
+      );
+    }
+
+    return transportList;
   }
 }

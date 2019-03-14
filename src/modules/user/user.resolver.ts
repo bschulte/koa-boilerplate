@@ -75,6 +75,23 @@ export class UserResolver {
     );
   }
 
+  @Mutation(() => Boolean)
+  @Authorized([roles.ADMIN])
+  public async changePassword(
+    @Arg("email") email: string,
+    @Arg("newPass") newPass: string
+  ) {
+    await userService.changePassword(email, newPass);
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @Authorized([roles.ADMIN])
+  public async deleteUser(@Arg("userId") userId: number) {
+    await userService.remove(userId);
+    return true;
+  }
+
   @FieldResolver(() => UserAccess)
   public async access(@Root() user: User) {
     return await userAccessService.findOneById(user.accessId);

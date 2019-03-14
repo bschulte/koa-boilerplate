@@ -26,5 +26,15 @@ describe("user-access", () => {
         expect(err.message).toBe("Invalid user access key: badValue");
       }
     });
+
+    it("should properly update a user access field", async () => {
+      const spy = jest
+        .spyOn(userAccessService, "save")
+        .mockImplementation(async () => ({ ...userAccess, isAdmin: true }));
+      const newUserAccess = await userAccessService.update(1, "isAdmin", true);
+
+      expect(spy.mock.calls.length).toBe(1);
+      expect(newUserAccess.isAdmin).toBe(true);
+    });
   });
 });

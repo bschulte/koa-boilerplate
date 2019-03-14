@@ -5,8 +5,8 @@
   "repository": "https://github.com/bschulte/koa-boilerplate",
   "main": "src/main.ts",
   "scripts": {
-    "test": "./node_modules/.bin/jest",
-    "test:watch": "./node_modules/.bin/jest --watch",
+    "test": "./node_modules/.bin/jest --runInBand",
+    "test:watch": "./node_modules/.bin/jest --watch --runInBand",
     "dev": "nodemon",
     "dev:debug": "nodemon --config nodemon-debug.json",
     "start": "./node_modules/.bin/ts-node ./src/app.ts",
@@ -46,6 +46,7 @@
     "@types/uuid": "^3.4.4",
     "@types/winston": "^2.4.4",
     "apollo-server-koa": "^2.4.8",
+    "apollo-server-testing": "^2.4.8",
     "async-local-storage": "^2.1.0",
     "bcrypt": "^3.0.3",
     "chai": "^4.2.0",
@@ -86,6 +87,9 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "@types/supertest": "^2.0.7",
+    "sqlite3": "^4.0.6",
+    "supertest": "^4.0.0",
     "ts-jest": "^24.0.0",
     "ts-mocha": "^6.0.0",
     "ts-node": "^7.0.1"
