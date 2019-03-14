@@ -1,6 +1,7 @@
 import * as passwordResetService from "./password-reset.service";
 import Router from "koa-router";
 import { Context } from "koa";
+import { StatusCode } from "../../common/constants";
 
 const router = new Router();
 
@@ -8,7 +9,9 @@ router.prefix("/password-reset");
 
 router.post("/", async (ctx: Context, next: any) => {
   const { email } = ctx.request.body;
-  return await passwordResetService.createPasswordResetToken(email);
+
+  await passwordResetService.createPasswordResetToken(email);
+  ctx.status = StatusCode.ACCEPTED;
 });
 
 router.patch("/", async (ctx: Context, next: any) => {
