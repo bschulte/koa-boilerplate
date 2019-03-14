@@ -23,3 +23,16 @@ export const DELETE_USER = gql`
     deleteUser(userId: $userId)
   }
 `;
+
+export const UPDATE_USER_CONFIG = gql`
+  mutation updateUserConfig(
+    $userConfigId: Float!
+    $key: String!
+    $value: String!
+  ) {
+    updateUserConfig(userConfigId: $userConfigId, key: $key, value: $value) {
+      id
+      configValueOne
+    }
+  }
+`;
