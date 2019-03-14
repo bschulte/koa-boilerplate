@@ -7,5 +7,6 @@ module.exports = {
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   collectCoverage: true,
   globalSetup: __dirname + "/src/testing/global-setup.ts",
-  globalTeardown: __dirname + "/src/testing/global-teardown.ts"
+  globalTeardown: __dirname + "/src/testing/global-teardown.ts",
+  setupFilesAfterEnv: [__dirname + "/src/testing/setup-after-env.ts"]
 };

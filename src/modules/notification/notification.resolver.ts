@@ -32,7 +32,7 @@ export class NotificationResolver {
   public async notification(@Ctx() ctx: any, @Arg("uuid") uuid: string) {
     const notification = await notificationService.findOneByUuid(uuid);
     if (!notification) {
-      createError(StatusCode.BAD_REQUEST, "Could not find notification");
+      throw createError(StatusCode.BAD_REQUEST, "Could not find notification");
     }
 
     authorizeResource(notification, ctx.user);
