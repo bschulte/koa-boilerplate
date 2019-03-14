@@ -10,6 +10,7 @@ import * as passwordResetService from "./password-reset.service";
 
 import { user } from "../../testing/fixtures/user.fixture";
 import User from "../user/user.entity";
+import { getRepository } from "typeorm";
 
 describe("password-reset", () => {
   let findOneByEmailSpy: jest.SpyInstance;
@@ -39,7 +40,7 @@ describe("password-reset", () => {
     test("it does not create a reset token for a non-existent user", async () => {
       findOneByEmailSpy.mockReturnValue(null);
       expect(
-        await passwordResetService.createPasswordResetToken(testUser.email)
+        await passwordResetService.createPasswordResetToken("bad-email@bad.com")
       ).toBe(false);
     });
   });
@@ -84,6 +85,36 @@ describe("password-reset", () => {
         );
       } catch (err) {
         expect(err.message).toBe("Expired token");
+      }
+    });
+
+    test("it throws when a bad email is given", async () => {
+      findOneByEmailSpy.mockImplementation(() => null);
+      try {
+        await passwordResetService.resetPassword(
+          "bad-email@bad.com",
+          testUser.resetToken,
+          "test-new-passA1234",
+          "different-password"
+        );
+      } catch (err) {
+        expect(err.message).toBe("Invalid email");
+      }
+    });
+
+    test("it throws when it tries to reset the password for a user that has not been issued a token", async () => {
+      testUser.resetToken = null;
+      findOneByEmailSpy.mockImplementation(async () => testUser);
+
+      try {
+        await passwordResetService.resetPassword(
+          testUser.email,
+          testUser.resetToken,
+          "test-new-passA1234",
+          "different-password"
+        );
+      } catch (err) {
+        expect(err.message).toBe("Invalid user");
       }
     });
 

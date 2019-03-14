@@ -16,12 +16,14 @@ router.post("/", async (ctx: Context, next: any) => {
 
 router.patch("/", async (ctx: Context, next: any) => {
   const { newPassword, newPasswordDupe, token, email } = ctx.request.body;
-  return await passwordResetService.resetPassword(
+  await passwordResetService.resetPassword(
     email,
     token,
     newPassword,
     newPasswordDupe
   );
+
+  ctx.status = StatusCode.ACCEPTED;
 });
 
 export const passwordResetRouter = router;

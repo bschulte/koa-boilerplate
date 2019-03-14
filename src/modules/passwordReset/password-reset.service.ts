@@ -23,7 +23,7 @@ export const createPasswordResetToken = async (email: string) => {
     _logger.warn(
       `Password reset requested for email that does not exist: ${email}`
     );
-    return true;
+    return false;
   }
 
   const token = randomStr(36);
@@ -47,13 +47,14 @@ export const resetPassword = async (
 ) => {
   const user: User = await userService.findOneByEmail(email);
   if (!user) {
-    _logger.warn("Invalid token provided for password reset");
-    throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
+    _logger.warn("Invalid email provided for password reset");
+    throw createError(StatusCode.UNAUTHORIZED, "Invalid email");
   }
+
   _logger.info(`Attempting to reset password for: ${user.email}`);
   if (!user.resetToken) {
     _logger.warn(`User does not have password reset token: ${user.email}`);
-    throw createError(StatusCode.UNAUTHORIZED, "Invalid token");
+    throw createError(StatusCode.UNAUTHORIZED, "Invalid user");
   }
 
   // Check if the token has expired

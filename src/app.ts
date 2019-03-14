@@ -96,5 +96,5 @@ server.applyMiddleware({ app, path: GRAPHQL_PATH });
 // Standard REST routes
 app.use(passwordResetRouter.routes());
 
-// export default app.listen({ port: PORT });
+// export const appListen = app.listen({ port: PORT });
 export default app;
