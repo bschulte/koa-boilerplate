@@ -8,7 +8,7 @@ import {
   CHANGE_PASSWORD,
   DELETE_USER
 } from "../test-mutations";
-import * as userServer from "../../modules/user/user.service";
+import * as userService from "../../modules/user/user.service";
 
 describe("user resolver e2e", () => {
   let testClient;
@@ -100,7 +100,7 @@ describe("user resolver e2e", () => {
   });
 
   test("that an admin can delete a user", async () => {
-    const user = await userServer.findOneByEmail("test@test.com");
+    const user = await userService.findOneByEmail("test@test.com");
     const res = await testClient.mutate({
       mutation: DELETE_USER,
       variables: {

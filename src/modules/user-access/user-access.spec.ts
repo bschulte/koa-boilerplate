@@ -3,7 +3,7 @@ import { userAccess } from "../../testing/fixtures/user-access.fixture";
 
 describe("user-access", () => {
   describe("update", () => {
-    it("should throw an error when the user access entry could not be found", async () => {
+    test("should throw an error when the user access entry could not be found", async () => {
       jest
         .spyOn(userAccessService, "findOneById")
         .mockImplementation(() => null);
@@ -15,7 +15,7 @@ describe("user-access", () => {
       }
     });
 
-    it("should throw an error when the user access key attempting to be updated is not valid", async () => {
+    test("should throw an error when the user access key attempting to be updated is not valid", async () => {
       jest
         .spyOn(userAccessService, "findOneById")
         .mockImplementation(async () => userAccess);
@@ -27,7 +27,7 @@ describe("user-access", () => {
       }
     });
 
-    it("should properly update a user access field", async () => {
+    test("should properly update a user access field", async () => {
       const spy = jest
         .spyOn(userAccessService, "save")
         .mockImplementation(async () => ({ ...userAccess, isAdmin: true }));

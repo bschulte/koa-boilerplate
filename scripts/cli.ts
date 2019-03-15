@@ -4,7 +4,7 @@ import chalk from "chalk";
 import * as _ from "lodash";
 
 import { FINAL_CMD, cmds, IOption } from "./cli/cmdDefs";
-import { bootstrap } from "../src/bootstrap";
+import { bootstrap } from "../src/bootstrap-db";
 
 const argv = minimist(process.argv.slice(2));
 
@@ -43,6 +43,10 @@ export const getOptionValue = (argv: any, name: string, alias: string = "") => {
 
 // For the final sub command, verify that any of the required options are there
 const verifyOptions = (argv: any, options: IOption[]) => {
+  if (!options) {
+    return;
+  }
+
   for (const option of options) {
     if (option.required) {
       // Check that either the name or its alias is present in the argv object

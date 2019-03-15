@@ -1,4 +1,5 @@
 import { cliCreateUser, cliChangePass, cliDeleteUser } from "./user";
+import { cliBootstrap } from "./bootstrap-module";
 
 export const FINAL_CMD = "finalCmd";
 
@@ -11,6 +12,13 @@ export interface IOption {
   description?: string;
   flag?: boolean; // Signifies if the option is simply a binary flag
 }
+
+const bootstrapCmds = {
+  module: {
+    type: FINAL_CMD,
+    handler: cliBootstrap
+  }
+};
 
 const userCmds = {
   create: {
@@ -68,5 +76,6 @@ const userCmds = {
  * the command.
  */
 export const cmds = {
-  user: { ...userCmds }
+  user: { ...userCmds },
+  bootstrap: { ...bootstrapCmds }
 };
