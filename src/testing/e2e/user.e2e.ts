@@ -7,7 +7,7 @@ import {
   LOGIN,
   CHANGE_PASSWORD,
   DELETE_USER
-} from "../test-mutations";
+} from "../utils/test-mutations";
 import * as userService from "../../modules/user/user.service";
 
 describe("user resolver e2e", () => {
