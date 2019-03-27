@@ -8,12 +8,10 @@ import {
   FieldResolver,
   Root
 } from "type-graphql";
-import jwt from "jsonwebtoken";
 
 import User from "./user.entity";
 import { UserInput } from "./dtos/UserInput";
 import * as userService from "./user.service";
-import { comparePasswords } from "../../security/authentication";
 import { Logger } from "../../logging/Logger";
 import { roles } from "../../common/constants";
 import * as userAccessService from "../user-access/user-access.service";
@@ -53,26 +51,7 @@ export class UserResolver {
 
   @Mutation(() => String)
   public async login(@Arg("userData") { email, password }: UserInput) {
-    const user = await userService.findOneByEmail(email);
-    // Check if the user exists
-    if (!user) {
-      this.logger.error(`Could not find user for email: ${email}`);
-      throw new Error("Could not find user");
-    }
-
-    // Check if the password is correct
-    if (!comparePasswords(password, user.password)) {
-      this.logger.error(`Invalid password entered for user: ${email}`);
-      throw new Error("Invalid password");
-    }
-
-    return jwt.sign(
-      { email, id: user.id },
-      process.env.APP_KEY || "super secret",
-      {
-        expiresIn: "2d"
-      }
-    );
+    return await userService.login(email, password);
   }
 
   @Mutation(() => Boolean)
@@ -83,6 +62,21 @@ export class UserResolver {
   ) {
     await userService.changePassword(email, newPass);
     return true;
+  }
+
+  @Query(() => String)
+  @Authorized([roles.ADMIN])
+  public async getImpersonationToken(
+    @Ctx() ctx: any,
+    @Arg("email") email: string
+  ) {
+    this.logger.debug(
+      `Admin user (${
+        ctx.user.email
+      }) requested impersonation token for user: ${email}`
+    );
+
+    return await userService.getImpersonationToken(email);
   }
 
   @Mutation(() => Boolean)

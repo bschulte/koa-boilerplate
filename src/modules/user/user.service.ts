@@ -1,15 +1,39 @@
+import { getRepository, Repository } from "typeorm";
+import jwt from "jsonwebtoken";
+import createError from "http-errors";
+
 import User from "./user.entity";
 import { randomStr } from "../../common/helpers/util";
 import { hashString } from "../../security/authentication";
 import UserAccess from "../user-access/user-access.entity";
-
-import { getRepository, Repository } from "typeorm";
+import { comparePasswords } from "../../security/authentication";
 import * as userAccessService from "../user-access/user-access.service";
 import UserConfig from "../user-config/user-config.entity";
 import * as userConfigService from "../user-config/user-config.service";
+import { Logger } from "../../logging/Logger";
+import { StatusCode } from "../../common/constants";
 
-const _repo = (): Repository<User> => {
-  return getRepository(User);
+export const login = async (email: string, password: string) => {
+  const user = await findOneByEmail(email);
+  // Check if the user exists
+  if (!user) {
+    _logger.error(`Could not find user for email: ${email}`);
+    throw createError(StatusCode.BAD_REQUEST, "Could not find user");
+  }
+
+  // Check if the password is correct
+  if (!comparePasswords(password, user.password)) {
+    _logger.error(`Invalid password entered for user: ${email}`);
+    throw createError(StatusCode.BAD_REQUEST, "Invalid password");
+  }
+
+  return jwt.sign(
+    { email, id: user.id },
+    process.env.APP_KEY || "super secret",
+    {
+      expiresIn: "2d"
+    }
+  );
 };
 
 /**
@@ -38,6 +62,29 @@ export const create = async (email: string) => {
 export const changePassword = async (email: string, newPass: string) => {
   const hashedPass = hashString(newPass);
   await _repo().update({ email }, { password: hashedPass });
+};
+
+/**
+ * Get a JWT corresponding to a given user for the admin user to impersonate
+ *
+ * @param email Email of user to get the impersonation token for
+ */
+export const getImpersonationToken = async (email: string) => {
+  const user = await findOneByEmail(email);
+  if (!user) {
+    _logger.error(
+      `User not found when requesting impersonation token: ${email}`
+    );
+    throw createError(StatusCode.BAD_REQUEST, "User not found");
+  }
+
+  return jwt.sign(
+    { email, id: user.id },
+    process.env.APP_KEY || "super secret",
+    {
+      expiresIn: "2d"
+    }
+  );
 };
 
 export const findOneById = async (userId: number) => {
@@ -69,3 +116,9 @@ export const remove = async (userId: number) => {
 export const save = async (user: User) => {
   await _repo().save(user);
 };
+
+const _repo = (): Repository<User> => {
+  return getRepository(User);
+};
+
+const _logger = new Logger("UserService");
