@@ -1,11 +1,14 @@
 import { Resolver, Authorized, Mutation, Arg } from "type-graphql";
+import { Inject } from "typedi";
 
 import UserAccess from "./user-access.entity";
-import * as userAccessService from "./user-access.service";
 import { roles } from "../../common/constants";
+import { UserAccessService } from "./user-access.service";
 
 @Resolver(UserAccess)
 export class UserAccessResolver {
+  @Inject() private userAccessService: UserAccessService;
+
   @Mutation(() => UserAccess)
   @Authorized([roles.ADMIN])
   public async updateUserAccess(
@@ -13,6 +16,6 @@ export class UserAccessResolver {
     @Arg("key") key: string,
     @Arg("value") value: boolean
   ) {
-    return await userAccessService.update(userAccessId, key, value);
+    return await this.userAccessService.update(userAccessId, key, value);
   }
 }

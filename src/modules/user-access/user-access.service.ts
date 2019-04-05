@@ -1,46 +1,46 @@
-import UserAccess from "./user-access.entity";
+import { Service } from "typedi";
 import { getRepository, Repository } from "typeorm";
 import createError from "http-errors";
+
+import UserAccess from "./user-access.entity";
 import { StatusCode } from "../../common/constants";
+import { OrmRepository } from "typeorm-typedi-extensions";
 
-export const findOneById = async (userAccessId: number) => {
-  return await _repo().findOne(userAccessId);
-};
+@Service()
+export class UserAccessService {
+  @OrmRepository(UserAccess) private repo: Repository<UserAccess>;
 
-export const remove = async (userAccessId: number) => {
-  return await _repo().delete(userAccessId);
-};
-
-export const update = async (
-  userAccessId: number,
-  key: string,
-  value: boolean
-) => {
-  const userAccess = await findOneById(userAccessId);
-  if (!userAccess) {
-    throw createError(
-      StatusCode.BAD_REQUEST,
-      "Could not find user access entry"
-    );
+  public async findOneById(userAccessId: number) {
+    return await this.repo.findOne(userAccessId);
   }
 
-  if (!(key in userAccess)) {
-    throw createError(
-      StatusCode.BAD_REQUEST,
-      `Invalid user access key: ${key}`
-    );
+  public async remove(userAccessId: number) {
+    return await this.repo.delete(userAccessId);
   }
 
-  userAccess[key] = value;
-  await save(userAccess);
+  public async update(userAccessId: number, key: string, value: boolean) {
+    const userAccess = await this.findOneById(userAccessId);
+    if (!userAccess) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        "Could not find user access entry"
+      );
+    }
 
-  return userAccess;
-};
+    if (!(key in userAccess)) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        `Invalid user access key: ${key}`
+      );
+    }
 
-export const save = async (userAccess: UserAccess) => {
-  return await _repo().save(userAccess);
-};
+    userAccess[key] = value;
+    await this.save(userAccess);
 
-const _repo = (): Repository<UserAccess> => {
-  return getRepository(UserAccess);
-};
+    return userAccess;
+  }
+
+  public async save(userAccess: UserAccess) {
+    return await this.repo.save(userAccess);
+  }
+}

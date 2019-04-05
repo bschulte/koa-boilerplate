@@ -8,7 +8,6 @@ import { OrmRepository } from "typeorm-typedi-extensions";
 @Service()
 export class NotificationService {
   @OrmRepository(Notification) private repo: Repository<Notification>;
-
   @OrmRepository(NotificationContent) private contentRepo: Repository<
     NotificationContent
   >;

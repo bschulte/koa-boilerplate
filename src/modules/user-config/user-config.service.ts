@@ -1,42 +1,45 @@
 import UserConfig from "./user-config.entity";
-import { getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import createError from "http-errors";
 import { StatusCode } from "../../common/constants";
+import { Service } from "typedi";
+import { OrmRepository } from "typeorm-typedi-extensions";
 
-export const findOneById = async (userConfigId: number) => {
-  return await _repo().findOne(userConfigId);
-};
+@Service()
+export class UserConfigService {
+  @OrmRepository(UserConfig) private repo: Repository<UserConfig>;
 
-export const update = async (userConfigId: number, key: string, value: any) => {
-  const userConfig = await findOneById(userConfigId);
-  if (!userConfig) {
-    throw createError(
-      StatusCode.BAD_REQUEST,
-      "Could not find user config entry"
-    );
+  public async findOneById(userConfigId: number) {
+    return await this.repo.findOne(userConfigId);
   }
 
-  if (!(key in userConfig)) {
-    throw createError(
-      StatusCode.BAD_REQUEST,
-      `Invalid user config key: ${key}`
-    );
+  public async update(userConfigId: number, key: string, value: any) {
+    const userConfig = await this.findOneById(userConfigId);
+    if (!userConfig) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        "Could not find user config entry"
+      );
+    }
+
+    if (!(key in userConfig)) {
+      throw createError(
+        StatusCode.BAD_REQUEST,
+        `Invalid user config key: ${key}`
+      );
+    }
+
+    userConfig[key] = value;
+    await this.save(userConfig);
+
+    return userConfig;
   }
 
-  userConfig[key] = value;
-  await save(userConfig);
+  public async remove(userConfigId: number) {
+    await this.repo.delete(userConfigId);
+  }
 
-  return userConfig;
-};
-
-export const remove = async (userConfigId: number) => {
-  await _repo().delete(userConfigId);
-};
-
-export const save = async (userConfig: UserConfig) => {
-  return await _repo().save(userConfig);
-};
-
-const _repo = (): Repository<UserConfig> => {
-  return getRepository(UserConfig);
-};
+  public async save(userConfig: UserConfig) {
+    return await this.repo.save(userConfig);
+  }
+}

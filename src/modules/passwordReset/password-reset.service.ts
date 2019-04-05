@@ -2,7 +2,7 @@ import * as bcrypt from "bcrypt";
 import moment from "moment";
 import * as owasp from "owasp-password-strength-test";
 import createError from "http-errors";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 
 import {
   EMAIL_FROM,
@@ -11,13 +11,15 @@ import {
 } from "../../common/constants";
 import { Logger } from "../../logging/Logger";
 import User from "../user/user.entity";
-import * as userService from "../user/user.service";
-import * as emailerService from "../emailer/emailer.service";
 import { randomStr } from "../../common/helpers/util";
+import { UserService } from "../user/user.service";
+import { EmailerService } from "../emailer/emailer.service";
 
 @Service()
 export class PasswordResetService {
   private logger = new Logger(PasswordResetService.name);
+  @Inject() private userService: UserService;
+  @Inject() private emailerService: EmailerService;
 
   /**
    * Creates a reset token for the given user if they exist
@@ -26,7 +28,7 @@ export class PasswordResetService {
    */
   public async createPasswordResetToken(email: string) {
     this.logger.info(`Password reset requested for email: ${email}`);
-    const user = await userService.findOneByEmail(email);
+    const user = await this.userService.findOneByEmail(email);
     if (!user) {
       this.logger.warn(
         `Password reset requested for email that does not exist: ${email}`
@@ -40,7 +42,7 @@ export class PasswordResetService {
     user.resetTokenExpires = moment()
       .add(2, "hour")
       .toDate();
-    await userService.save(user);
+    await this.userService.save(user);
 
     await this.sendPasswordResetEmail(user, token);
 
@@ -62,7 +64,7 @@ export class PasswordResetService {
     newPassword: string,
     newPasswordDupe: string
   ) {
-    const user: User = await userService.findOneByEmail(email);
+    const user: User = await this.userService.findOneByEmail(email);
     if (!user) {
       this.logger.warn("Invalid email provided for password reset");
       throw createError(StatusCode.UNAUTHORIZED, "Invalid email");
@@ -89,7 +91,7 @@ export class PasswordResetService {
     user.password = bcrypt.hashSync(newPassword, 10);
     user.resetToken = null;
     user.resetTokenExpires = null;
-    await userService.save(user);
+    await this.userService.save(user);
 
     this.logger.debug(`Reset password successfully for user: ${user.email}`);
 
@@ -138,11 +140,8 @@ export class PasswordResetService {
     }
   }
 
-  private sendPasswordResetEmail = async (
-    user: User,
-    generatedToken: string
-  ) => {
-    await emailerService.send({
+  private async sendPasswordResetEmail(user: User, generatedToken: string) {
+    await this.emailerService.send({
       subject: "[Kryptowire EMM] Password Reset",
       to: [user.email],
       from: EMAIL_FROM,
@@ -151,5 +150,5 @@ export class PasswordResetService {
         token: generatedToken
       }
     });
-  };
+  }
 }

@@ -1,13 +1,15 @@
 import { Resolver, Query, Arg, Mutation, Authorized, Ctx } from "type-graphql";
 
 import UserConfig from "./user-config.entity";
-import * as userConfigService from "./user-config.service";
 import { roles } from "../../common/constants";
 import { Logger } from "../../logging/Logger";
+import { Inject } from "typedi";
+import { UserConfigService } from "./user-config.service";
 
 @Resolver(UserConfig)
 export class UserConfigResolver {
   private logger = new Logger(UserConfigResolver.name);
+  @Inject() private userConfigService: UserConfigService;
 
   @Mutation(() => UserConfig)
   @Authorized([roles.ADMIN])
@@ -17,6 +19,6 @@ export class UserConfigResolver {
     @Arg("value") value: string
   ) {
     this.logger.info(`Updating user config key: ${key} to value: ${value}`);
-    return await userConfigService.update(userConfigId, key, value);
+    return await this.userConfigService.update(userConfigId, key, value);
   }
 }
