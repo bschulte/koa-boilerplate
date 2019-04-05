@@ -10,6 +10,7 @@ import morgan from "koa-morgan";
 import als from "async-local-storage";
 import { v4 as uuid } from "uuid";
 import { ApolloServer } from "apollo-server-koa";
+import { Container } from "typedi";
 
 import { buildSchemaSync } from "type-graphql";
 
@@ -18,7 +19,10 @@ import { authChecker } from "./security/auth-checker";
 import { Logger } from "./logging/Logger";
 import * as userService from "./modules/user/user.service";
 import { isDevEnv } from "./common/helpers/util";
-import { passwordResetRouter } from "./modules/passwordReset/password-reset.controller";
+import {
+  useContainer as routingUseContainer,
+  useKoaServer
+} from "routing-controllers";
 
 const { APP_KEY = "super secret", PORT = 5555 } = process.env;
 
@@ -36,7 +40,14 @@ const schema = buildSchemaSync({
 // order to feed in all our controllers
 const app = new Koa();
 
+// Use bodyparser for body parameters being sent
 app.use(bodyParser());
+
+// Use DI for controllers
+routingUseContainer(Container);
+useKoaServer(app, {
+  controllers: [`${__dirname}/modules/**/*.controller.ts`]
+});
 
 // Global exception handler
 app.use(async (ctx: Context, next: any) => {
@@ -92,9 +103,6 @@ const server = new ApolloServer({
 
 // Apply GraphQL middleware to the express app
 server.applyMiddleware({ app, path: GRAPHQL_PATH });
-
-// Standard REST routes
-app.use(passwordResetRouter.routes());
 
 // export const appListen = app.listen({ port: PORT });
 export default app;

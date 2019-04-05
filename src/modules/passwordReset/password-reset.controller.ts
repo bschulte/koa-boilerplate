@@ -1,29 +1,47 @@
 import * as passwordResetService from "./password-reset.service";
-import Router from "koa-router";
 import { Context } from "koa";
+import {
+  JsonController,
+  Post,
+  BodyParam,
+  Ctx,
+  Patch
+} from "routing-controllers";
 import { StatusCode } from "../../common/constants";
+import { Logger } from "../../logging/Logger";
 
-const router = new Router();
+@JsonController("/password-reset")
+export class PasswordResetController {
+  private logger = new Logger(PasswordResetController.name);
 
-router.prefix("/password-reset");
+  @Post("/")
+  public async createPasswordResetToken(
+    @BodyParam("email") email: string,
+    @Ctx() ctx: Context
+  ) {
+    this.logger.debug(`Creating password reset token for user: ${email}`);
+    await passwordResetService.createPasswordResetToken(email);
 
-router.post("/", async (ctx: Context, next: any) => {
-  const { email } = ctx.request.body;
+    ctx.status = StatusCode.ACCEPTED;
+    return { success: true };
+  }
 
-  await passwordResetService.createPasswordResetToken(email);
-  ctx.status = StatusCode.ACCEPTED;
-});
+  @Patch("/")
+  public async resetPassword(
+    @BodyParam("email") email: string,
+    @BodyParam("token") token: string,
+    @BodyParam("newPassword") newPassword: string,
+    @BodyParam("newPasswordDupe") newPasswordDupe: string,
+    @Ctx() ctx: Context
+  ) {
+    await passwordResetService.resetPassword(
+      email,
+      token,
+      newPassword,
+      newPasswordDupe
+    );
 
-router.patch("/", async (ctx: Context, next: any) => {
-  const { newPassword, newPasswordDupe, token, email } = ctx.request.body;
-  await passwordResetService.resetPassword(
-    email,
-    token,
-    newPassword,
-    newPasswordDupe
-  );
-
-  ctx.status = StatusCode.ACCEPTED;
-});
-
-export const passwordResetRouter = router;
+    ctx.status = StatusCode.ACCEPTED;
+    return { success: true };
+  }
+}
