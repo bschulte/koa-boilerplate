@@ -1,4 +1,3 @@
-import * as passwordResetService from "./password-reset.service";
 import { Context } from "koa";
 import {
   JsonController,
@@ -7,12 +6,16 @@ import {
   Ctx,
   Patch
 } from "routing-controllers";
+import { Inject } from "typedi";
+
 import { StatusCode } from "../../common/constants";
 import { Logger } from "../../logging/Logger";
+import { PasswordResetService } from "./password-reset.service";
 
 @JsonController("/password-reset")
 export class PasswordResetController {
   private logger = new Logger(PasswordResetController.name);
+  @Inject() private passwordResetService: PasswordResetService;
 
   @Post("/")
   public async createPasswordResetToken(
@@ -20,7 +23,7 @@ export class PasswordResetController {
     @Ctx() ctx: Context
   ) {
     this.logger.debug(`Creating password reset token for user: ${email}`);
-    await passwordResetService.createPasswordResetToken(email);
+    await this.passwordResetService.createPasswordResetToken(email);
 
     ctx.status = StatusCode.ACCEPTED;
     return { success: true };
@@ -34,7 +37,7 @@ export class PasswordResetController {
     @BodyParam("newPasswordDupe") newPasswordDupe: string,
     @Ctx() ctx: Context
   ) {
-    await passwordResetService.resetPassword(
+    await this.passwordResetService.resetPassword(
       email,
       token,
       newPassword,

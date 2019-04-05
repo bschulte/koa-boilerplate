@@ -12,6 +12,7 @@
     "max-classes-per-file": false,
     "no-empty": false,
     "only-arrow-functions": false,
-    "no-var-requires": false
+    "no-var-requires": false,
+    "semicolon": false
   }
 }
