@@ -2,23 +2,40 @@ import { getRepository, Repository } from "typeorm";
 
 import Notification from "./notification.entity";
 import NotificationContent from "./notification-content.entity";
+import { Service } from "typedi";
+import { OrmRepository } from "typeorm-typedi-extensions";
 
-export const findAll = async (userId: number) => {
-  return await _repo().find({ userId });
-};
+@Service()
+export class NotificationService {
+  @OrmRepository(Notification) private repo: Repository<Notification>;
 
-export const findOneByUuid = async (uuid: string) => {
-  return await _repo().findOne({ uuid });
-};
+  @OrmRepository(NotificationContent) private contentRepo: Repository<
+    NotificationContent
+  >;
 
-export const findContentById = async (id: number) => {
-  return await _contentRepo().findOne(id);
-};
+  public async findAll(userId: number) {
+    return await this.repo.find({ userId });
+  }
 
-const _repo = (): Repository<Notification> => {
-  return getRepository(Notification);
-};
+  public async findOneByUuid(uuid: string) {
+    return await this.repo.findOne({ uuid });
+  }
 
-const _contentRepo = (): Repository<NotificationContent> => {
-  return getRepository(NotificationContent);
-};
+  public async findContentById(id: number) {
+    return await this.contentRepo.findOne(id);
+  }
+
+  public async create(userIds: number[], title: string, html: string) {
+    const notifications = userIds.map((id: number) => {
+      return this.repo.create({
+        userId: id,
+        content: this.contentRepo.create({
+          title,
+          html
+        })
+      });
+    });
+
+    return await this.repo.save(notifications);
+  }
+}

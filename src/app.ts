@@ -12,7 +12,11 @@ import { v4 as uuid } from "uuid";
 import { ApolloServer } from "apollo-server-koa";
 import { Container } from "typedi";
 
-import { buildSchemaSync } from "type-graphql";
+import {
+  buildSchemaSync,
+  useContainer as graphqlUseContainer,
+  buildSchema
+} from "type-graphql";
 
 import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
@@ -23,6 +27,7 @@ import {
   useContainer as routingUseContainer,
   useKoaServer
 } from "routing-controllers";
+import { useContainer as ormUseContainer } from "typeorm";
 
 const { APP_KEY = "super secret", PORT = 5555 } = process.env;
 
@@ -30,6 +35,8 @@ const GRAPHQL_PATH = "/graphql";
 
 const _logger = new Logger("App.ts");
 
+// Use DI for resolvers
+graphqlUseContainer(Container);
 const schema = buildSchemaSync({
   resolvers: [`${__dirname}/**/*.resolver.ts`],
   authChecker,
@@ -48,6 +55,9 @@ routingUseContainer(Container);
 useKoaServer(app, {
   controllers: [`${__dirname}/modules/**/*.controller.ts`]
 });
+
+// Use DI for TypeORM
+ormUseContainer(Container);
 
 // Global exception handler
 app.use(async (ctx: Context, next: any) => {
