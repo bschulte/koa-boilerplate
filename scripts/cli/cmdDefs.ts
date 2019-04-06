@@ -1,5 +1,5 @@
-import { cliCreateUser, cliChangePass, cliDeleteUser } from "./user";
-import { cliBootstrap } from "./bootstrap-module";
+import { cliCreateUser, cliChangePass, cliDeleteUser } from "./user.cli";
+import { cliBootstrap } from "./bootstrap-module.cli";
 
 export const FINAL_CMD = "finalCmd";
 

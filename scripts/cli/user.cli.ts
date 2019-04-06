@@ -2,8 +2,10 @@ import chalk from "chalk";
 import prompts from "prompts";
 
 import { getOptionValue } from "../cli";
-import * as userService from "../../src/modules/user/user.service";
 import User from "../../src/modules/user/user.entity";
+import { UserService } from "../../src/modules/user/user.service";
+
+const userService = new UserService();
 
 export const cliCreateUser = async (argv: any) => {
   const email = getOptionValue(argv, "e", "email");

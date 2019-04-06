@@ -1,24 +1,26 @@
 import { getRepository, Repository } from "typeorm";
 import jwt from "jsonwebtoken";
 import createError from "http-errors";
-import { Service } from "typedi";
+import { Service, Inject } from "typedi";
 
 import User from "./user.entity";
 import { randomStr } from "../../common/helpers/util";
 import { hashString } from "../../security/authentication";
 import UserAccess from "../user-access/user-access.entity";
 import { comparePasswords } from "../../security/authentication";
-import * as userAccessService from "../user-access/user-access.service";
 import UserConfig from "../user-config/user-config.entity";
-import * as userConfigService from "../user-config/user-config.service";
 import { Logger } from "../../logging/Logger";
 import { StatusCode } from "../../common/constants";
 import { OrmRepository } from "typeorm-typedi-extensions";
+import { UserAccessService } from "../user-access/user-access.service";
+import { UserConfigService } from "../user-config/user-config.service";
 
 @Service()
 export class UserService {
   private logger = new Logger(UserService.name);
   @OrmRepository(User) private repo: Repository<User>;
+  @Inject() private userAccessService: UserAccessService;
+  @Inject() private userConfigService: UserConfigService;
 
   public async login(email: string, password: string) {
     const user = await this.findOneByEmail(email);
@@ -116,8 +118,8 @@ export class UserService {
 
     // We have to manually delete one-to-one relationships due
     // to how mysql delete cascades work
-    await userAccessService.remove(user.accessId);
-    await userConfigService.remove(user.configId);
+    await this.userAccessService.remove(user.accessId);
+    await this.userConfigService.remove(user.configId);
   }
 
   public async save(user: User) {
