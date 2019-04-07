@@ -10,17 +10,24 @@ import UserAccess from "../user-access/user-access.entity";
 import { comparePasswords } from "../../security/authentication";
 import UserConfig from "../user-config/user-config.entity";
 import { Logger } from "../../logging/Logger";
-import { StatusCode } from "../../common/constants";
+import {
+  StatusCode,
+  EMAIL_FROM,
+  VERIFY_EMAIL_SNIPPET
+} from "../../common/constants";
 import { OrmRepository } from "typeorm-typedi-extensions";
 import { UserAccessService } from "../user-access/user-access.service";
 import { UserConfigService } from "../user-config/user-config.service";
+import { EmailerService } from "../emailer/emailer.service";
 
 @Service()
 export class UserService {
   private logger = new Logger(UserService.name);
   @OrmRepository(User) private repo: Repository<User>;
+
   @Inject() private userAccessService: UserAccessService;
   @Inject() private userConfigService: UserConfigService;
+  @Inject() private emailerService: EmailerService;
 
   public async login(email: string, password: string) {
     const user = await this.findOneByEmail(email);
@@ -50,20 +57,48 @@ export class UserService {
    *
    * @param email Email to use while creating new user
    */
-  public async create(email: string) {
+  public async create(email: string, password: string = null) {
+    // Make sure the user does not exist already
+    const user = await this.findOneByEmail(email);
+    if (user) {
+      this.logger.debug(
+        `Error while creating user, email exists already:${email}`
+      );
+      throw createError(StatusCode.BAD_REQUEST, "User exists already");
+    }
+
     const randomPassword = randomStr(12);
 
-    const user = new User();
-    user.email = email;
-    user.password = randomPassword;
+    const newUser = new User();
+    newUser.email = email;
+    newUser.password = password || randomPassword;
 
     // Create default access and config objects for the user during creation
     const access = new UserAccess();
-    user.access = access;
+    newUser.access = access;
     const config = new UserConfig();
-    user.config = config;
+    newUser.config = config;
 
-    await this.save(user);
+    // If the password was not provided, the user was created via the command
+    // line or another internal admin service so we don't have to do
+    // the email verification
+    if (!password) {
+      newUser.emailVerified = true;
+    }
+
+    await this.save(newUser);
+
+    if (!newUser.emailVerified) {
+      this.emailerService.send({
+        subject: "Verify your email",
+        to: [email],
+        from: EMAIL_FROM,
+        snippet: VERIFY_EMAIL_SNIPPET,
+        params: {
+          token: newUser.emailToken
+        }
+      });
+    }
 
     return randomPassword;
   }

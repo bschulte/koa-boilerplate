@@ -11,3 +11,4 @@ export enum StatusCode {
 
 export const EMAIL_FROM = "test-account@test.com";
 export const PASSWORD_RESET_SNIPPET = "password_reset_snippet";
+export const VERIFY_EMAIL_SNIPPET = "verify_email_snippet";

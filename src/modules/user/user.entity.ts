@@ -8,7 +8,8 @@ import {
   OneToOne,
   JoinColumn,
   BeforeInsert,
-  BeforeUpdate
+  BeforeUpdate,
+  Generated
 } from "typeorm";
 
 import { hashString } from "../../security/authentication";
@@ -44,6 +45,13 @@ export default class User {
 
   @Column({ nullable: true })
   public resetTokenExpires: Date;
+
+  @Column()
+  @Generated("uuid")
+  public emailToken: string;
+
+  @Column({ default: false })
+  public emailVerified: boolean;
 
   @OneToOne(() => UserAccess, { cascade: true, eager: true })
   @JoinColumn()
