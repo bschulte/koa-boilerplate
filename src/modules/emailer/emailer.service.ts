@@ -7,9 +7,14 @@ import { Logger } from "../../logging/Logger";
 import { SendDto } from "./dtos/send.dto";
 import { MailOptions } from "nodemailer/lib/smtp-pool";
 import { isDevEnv } from "../../common/helpers/util";
-import { PASSWORD_RESET_SNIPPET, StatusCode } from "../../common/constants";
+import {
+  PASSWORD_RESET_SNIPPET,
+  StatusCode,
+  VERIFY_EMAIL_SNIPPET
+} from "../../common/constants";
 import { passwordResetSnippet } from "./templates/password-reset.snippet";
 import { generalTemplate } from "./templates/general";
+import { emailVerificationSnippet } from "./templates/email-verification.snippet";
 
 const _logger = new Logger("EmailerService");
 
@@ -69,6 +74,8 @@ export class EmailerService {
     switch (snippet) {
       case PASSWORD_RESET_SNIPPET:
         return passwordResetSnippet(params.token);
+      case VERIFY_EMAIL_SNIPPET:
+        return emailVerificationSnippet(params.token);
       default:
         _logger.error("Invalid email snippet provided");
         throw createError(

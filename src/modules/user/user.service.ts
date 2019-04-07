@@ -89,6 +89,7 @@ export class UserService {
     await this.save(newUser);
 
     if (!newUser.emailVerified) {
+      this.logger.debug(`Sending email verification email to: ${email}`);
       this.emailerService.send({
         subject: "Verify your email",
         to: [email],
@@ -106,6 +107,24 @@ export class UserService {
   public async changePassword(email: string, newPass: string) {
     const hashedPass = hashString(newPass);
     await this.repo.update({ email }, { password: hashedPass });
+  }
+
+  /**
+   * Attempts to verify that a provided token is associated with
+   * an existing user
+   *
+   * @param token Token for email verification
+   */
+  public async verifyEmailToken(token: string) {
+    const user = await this.findOneByEmailToken(token);
+    if (!user) {
+      this.logger.warn(`User for email token not found`);
+      throw createError(StatusCode.BAD_REQUEST, "User not found");
+    }
+
+    this.logger.debug(`Email verified for user: ${user.email}`);
+    user.emailVerified = true;
+    await this.save(user);
   }
 
   /**
@@ -137,6 +156,10 @@ export class UserService {
 
   public async findOneByEmail(email: string) {
     return await this.repo.findOne({ email });
+  }
+
+  public async findOneByEmailToken(emailToken: string) {
+    return await this.repo.findOne({ emailToken });
   }
 
   public async findAll() {

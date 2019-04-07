@@ -4,7 +4,9 @@ import {
   Post,
   BodyParam,
   Ctx,
-  Patch
+  Patch,
+  QueryParam,
+  Get
 } from "routing-controllers";
 import { Inject } from "typedi";
 
@@ -23,6 +25,13 @@ export class UserController {
   ) {
     this.logger.debug(`Creating new user: ${email}`);
     await this.userService.create(email, password);
+
+    return { success: true };
+  }
+
+  @Get("/verify-email")
+  public async verifyEmail(@QueryParam("token") token: string) {
+    await this.userService.verifyEmailToken(token);
 
     return { success: true };
   }
