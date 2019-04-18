@@ -13,6 +13,7 @@
     "no-empty": false,
     "only-arrow-functions": false,
     "no-var-requires": false,
-    "semicolon": false
+    "semicolon": false,
+    "object-literal-key-quotes": false
   }
 }

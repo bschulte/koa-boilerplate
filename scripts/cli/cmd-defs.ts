@@ -34,7 +34,7 @@ const userCmds = {
     ],
     handler: cliCreateUser
   },
-  changePass: {
+  "change-pass": {
     type: FINAL_CMD,
     options: [
       {
