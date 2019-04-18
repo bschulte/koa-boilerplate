@@ -78,7 +78,11 @@ export class Logger {
   }
 
   private log(level: LogLevel, message: string) {
-    this.logger.log(level, `${message.replace("\n", "")}`);
+    if (typeof message === "object") {
+      this.logger.log(level, `${JSON.stringify(message).replace("\n", "")}`);
+    } else {
+      this.logger.log(level, `${message.replace("\n", "")}`);
+    }
 
     Logger.lastMessageTimestamp = new Date().getTime();
   }
