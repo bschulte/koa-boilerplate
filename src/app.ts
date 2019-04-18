@@ -29,11 +29,11 @@ import { Logger } from "./logging/Logger";
 import { isDevEnv } from "./common/helpers/util";
 import { UserService } from "./modules/user/user.service";
 
-const { APP_KEY = "super secret", PORT = 5555 } = process.env;
+const { APP_KEY = "super secret" } = process.env;
 
 const GRAPHQL_PATH = "/graphql";
 
-export default async function createApp() {
+const createApp = async () => {
   const _logger = new Logger("App.ts");
   const userService = Container.get(UserService);
 
@@ -117,4 +117,6 @@ export default async function createApp() {
   server.applyMiddleware({ app, path: GRAPHQL_PATH });
 
   return app;
-}
+};
+
+export default createApp;
