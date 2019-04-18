@@ -1,4 +1,4 @@
-import app from "./app";
+import createApp from "./app";
 import { bootstrap } from "./bootstrap-db";
 import { Logger } from "./logging/Logger";
 
@@ -9,6 +9,9 @@ import { Logger } from "./logging/Logger";
   try {
     // Setup DB connection
     await bootstrap();
+
+    // Create the app
+    const app = await createApp();
 
     app.listen({ port: PORT }, () => {
       logger.info(`App listening on http://localhost:${PORT}`);
