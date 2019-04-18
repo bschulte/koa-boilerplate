@@ -21,7 +21,6 @@ import {
   buildSchemaSync,
   useContainer as graphqlUseContainer
 } from "type-graphql";
-import { useContainer as ormUseContainer } from "typeorm";
 
 import User from "./modules/user/user.entity";
 import { authChecker } from "./security/auth-checker";
@@ -35,7 +34,6 @@ const GRAPHQL_PATH = "/graphql";
 
 const createApp = async () => {
   const _logger = new Logger("App.ts");
-  const userService = Container.get(UserService);
 
   // Use DI for resolvers
   graphqlUseContainer(Container);
@@ -57,9 +55,6 @@ const createApp = async () => {
   useKoaServer(app, {
     controllers: [`${__dirname}/modules/**/*.controller.ts`]
   });
-
-  // Use DI for TypeORM
-  ormUseContainer(Container);
 
   // Global exception handler
   app.use(async (ctx: Context, next: any) => {
@@ -101,6 +96,7 @@ const createApp = async () => {
   app.use(morgan("short", { stream: _logger }));
 
   // Apollo server
+  const userService = Container.get(UserService);
   const server = new ApolloServer({
     schema,
     context: async ({ ctx }: { ctx: Context & { user: User } }) => {

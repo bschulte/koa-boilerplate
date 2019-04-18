@@ -5,7 +5,7 @@ import minimist from "minimist";
 import chalk from "chalk";
 import * as _ from "lodash";
 
-import { FINAL_CMD, cmds, IOption } from "./cli/cmdDefs";
+import { FINAL_CMD, cmds, IOption } from "./cli/cmd-defs";
 import { bootstrap } from "../src/bootstrap-db";
 
 const argv = minimist(process.argv.slice(2));

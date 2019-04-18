@@ -6,13 +6,15 @@ import { getOptionValue } from "../cli";
 import User from "../../src/modules/user/user.entity";
 import { UserService } from "../../src/modules/user/user.service";
 
-const userService = Container.get(UserService);
+const _getUserService = () => {
+  return Container.get(UserService);
+};
 
 export const cliCreateUser = async (argv: any) => {
   const email = getOptionValue(argv, "e", "email");
   console.log("Creating user:", email);
 
-  const generatedPassword = await userService.create(email);
+  const generatedPassword = await _getUserService().create(email);
   console.log("Generated password for user:", chalk.yellow(generatedPassword));
 };
 
@@ -20,7 +22,7 @@ export const cliChangePass = async (argv: any) => {
   const email = getOptionValue(argv, "e", "email");
   const password = getOptionValue(argv, "p", "password");
 
-  await userService.changePassword(email, password);
+  await _getUserService().changePassword(email, password);
   console.log(chalk.green("Successfully changed password"));
 };
 
@@ -30,7 +32,7 @@ export const cliDeleteUser = async (argv: any) => {
   // If we weren't provided an email, issue a prompt to the user to select which
   // user they want to delete
   if (!email) {
-    const users = await userService.findAll();
+    const users = await _getUserService().findAll();
     const response = await prompts({
       type: "select",
       name: "email",
@@ -43,7 +45,7 @@ export const cliDeleteUser = async (argv: any) => {
     email = response.email;
   }
 
-  const user = await userService.findOneByEmail(email);
+  const user = await _getUserService().findOneByEmail(email);
 
   const response = await prompts({
     type: "toggle",
@@ -59,5 +61,5 @@ export const cliDeleteUser = async (argv: any) => {
     process.exit(0);
   }
 
-  await userService.remove(user.id);
+  await _getUserService().remove(user.id);
 };

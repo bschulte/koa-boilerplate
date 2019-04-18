@@ -83,6 +83,9 @@ export class Logger {
     } else {
       this.logger.log(level, `${message.replace("\n", "")}`);
     }
+    if (level === "error") {
+      console.log(message);
+    }
 
     Logger.lastMessageTimestamp = new Date().getTime();
   }

@@ -3,7 +3,8 @@ import {
   createConnection,
   getRepository,
   getConnection,
-  EntityMetadata
+  EntityMetadata,
+  useContainer as ormUseContainer
 } from "typeorm";
 
 import { SqlLogger } from "./logging/SqlLogger";
@@ -13,6 +14,7 @@ import UserAccess from "./modules/user-access/user-access.entity";
 import UserConfig from "./modules/user-config/user-config.entity";
 import Notification from "./modules/notification/notification.entity";
 import NotificationContent from "./modules/notification/notification-content.entity";
+import Container from "typedi";
 
 dotenv.config();
 
@@ -85,6 +87,8 @@ export const reloadMockData = async () => {
 // Function to handle the setting up of anything that's needed
 // before starting the server/running CLI commands
 export const bootstrap = async () => {
+  ormUseContainer(Container);
+
   // Setup DB connection
   if (NODE_ENV !== "test") {
     await createConnection({
