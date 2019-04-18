@@ -1,4 +1,6 @@
 #!/usr/bin/env ts-node
+import "reflect-metadata";
+
 import minimist from "minimist";
 import chalk from "chalk";
 import * as _ from "lodash";
