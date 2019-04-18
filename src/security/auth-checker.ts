@@ -3,12 +3,12 @@ import { UserService } from "../modules/user/user.service";
 import { roles as userRoles } from "../common/constants";
 import Container from "typedi";
 
-const userService = Container.get(UserService);
-
 export const authChecker: AuthChecker = async (
   { context }: { context: any },
   roles: string[]
 ) => {
+  const userService = Container.get(UserService);
+
   if (!context.user) {
     return false;
   }
