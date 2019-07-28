@@ -248,7 +248,10 @@ export class ${name}Controller {
 }
 `;
 
-  const inputClass = `import { ObjectType, Field } from "type-graphql";
+  const inputClass = `import { ObjectType, Field, InputType } from "type-graphql";
+
+  @ObjectType()
+  @InputType('${name}Input')
   export class ${name}Input {
   ${columns
     .map((column: { name: string; type: string }) => {
