@@ -45,7 +45,7 @@
     "@types/sinon": "^7.0.9",
     "@types/uuid": "^3.4.4",
     "@types/winston": "^2.4.4",
-    "apollo-server-koa": "^2.4.8",
+    "apollo-server-koa": "^2.14.2",
     "apollo-server-testing": "^2.4.8",
     "async-local-storage": "^2.1.0",
     "bcrypt": "^3.0.3",
