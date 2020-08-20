@@ -48,7 +48,7 @@
     "apollo-server-koa": "^2.4.8",
     "apollo-server-testing": "^2.4.8",
     "async-local-storage": "^2.1.0",
-    "bcrypt": "^3.0.3",
+    "bcrypt": "^5.0.0",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "dotenv": "^6.2.0",
