@@ -82,7 +82,7 @@
     "sinon": "^7.2.7",
     "tsconfig-paths": "^3.8.0",
     "tslint": "^5.12.0",
-    "type-graphql": "^0.16.0",
+    "type-graphql": "^0.17.6",
     "typedi": "^0.8.0",
     "typeorm": "^0.2.14",
     "typeorm-typedi-extensions": "^0.2.3",
